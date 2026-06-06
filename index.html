@@ -1,444 +1,1842 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wild Wild | Wear the Wild</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --canopy-900: #07130a;
-      --canopy-700: #123520;
-      --canopy-500: #246641;
-      --earth-700: #4a3322;
-      --earth-500: #7a5236;
-      --earth-300: #b88355;
-      --mist: #b7e8cf;
-      --sand: #edd4a6;
-      --cream: #f4f8ee;
-      --card: rgba(6, 21, 12, 0.5);
-      --card-border: rgba(183, 232, 207, 0.22);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Wild Wild — Defend The Habitat</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dela+Gothic+One&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <style>
+        /* CSS RESET & CUSTOM PROPERTIES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
+        html {
+            scroll-behavior: smooth;
+            scrollbar-color: #A58B6F #1C1A17;
+            color-scheme: dark only;
+        }
 
-    body {
-      font-family: "Sora", system-ui, sans-serif;
-      color: var(--cream);
-      background:
-        radial-gradient(circle at 15% 25%, rgba(36, 102, 65, 0.5), transparent 45%),
-        radial-gradient(circle at 82% 85%, rgba(18, 53, 32, 0.6), transparent 48%),
-        linear-gradient(130deg, var(--canopy-900) 0%, #0b2616 48%, var(--canopy-700) 100%);
-    }
+        :root {
+            --bg-primary: #1C1A17;
+            --bg-secondary: #2A2420;
+            --bg-section-alt: #232B1E;
+            --text-heading: #E6DFD3;
+            --text-body: #E6DFD3;
+            --accent: #A58B6F;
+            --accent-hover: #C4A882;
+            --conservation: #4A5E3A;
+            --danger: #8C3A2E;
+            --glass-bg: rgba(164, 139, 111, 0.12);
+            --glass-bg-hover: rgba(164, 139, 111, 0.22);
+            --glass-border: rgba(164, 139, 111, 0.25);
+            --glass-border-hover: rgba(164, 139, 111, 0.45);
+            --card-bg: rgba(42, 36, 32, 0.6);
+            --card-border: rgba(164, 139, 111, 0.15);
+            --divider-color: rgba(164, 139, 111, 0.2);
+            --nav-text-shadow: 0 1px 2px rgba(28, 26, 23, 0.95), 0 2px 10px rgba(28, 26, 23, 0.8), 0 0 24px rgba(28, 26, 23, 0.55);
+            --gaur-espresso: #E6DFD3;
+            --chital-dust: #A58B6F;
+            --jungle-canopy: #232B1E;
+            --mugger-slate: #E6DFD3;
+            --bear-mauve: #E6DFD3;
+            --snow-leopard-ash: rgba(164, 139, 111, 0.2);
+            --cream: #E6DFD3;
+            --off-white: #E6DFD3;
+            --page-pad: clamp(1.25rem, 5vw, 6rem);
+            --section-pad-y: clamp(4rem, 10vw, 10rem);
+            --content-max: 1280px;
+            --touch-min: 44px;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+        }
 
-    .landing {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      isolation: isolate;
-    }
+        body {
+            font-family: "DM Sans", sans-serif;
+            background: radial-gradient(
+                ellipse at 20% 0%,
+                #323C28 0%,
+                #2A2420 25%,
+                #1C1A17 50%,
+                #2A1F1A 70%,
+                #4B3621 100%
+            );
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+            text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
 
-    #birds {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: auto;
-      cursor: crosshair;
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    .texture {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(92, 156, 104, 0.22), transparent 42%),
-        radial-gradient(circle at 80% 70%, rgba(44, 95, 61, 0.26), transparent 44%),
-        linear-gradient(rgba(4, 10, 6, 0.36), rgba(4, 10, 6, 0.5)),
-        url("https://images.unsplash.com/photo-1511497584782-876760111969?auto=format&fit=crop&w=1800&q=80") center/cover no-repeat;
-      mix-blend-mode: luminosity;
-      opacity: 0.42;
-      z-index: -1;
-    }
+        img, video {
+            max-width: 100%;
+            display: block;
+        }
 
-    .jungle-glow {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 12% 80%, rgba(126, 190, 105, 0.15), transparent 35%),
-        radial-gradient(circle at 88% 18%, rgba(71, 141, 95, 0.18), transparent 38%);
-      z-index: 0;
-    }
+        img:not(.hero-bg-image):not(.closing-cta-bg) {
+            height: auto;
+        }
 
-    .content {
-      width: min(760px, 100%);
-      text-align: center;
-      background: transparent;
-      border: 0;
-      backdrop-filter: none;
-      border-radius: 24px;
-      padding: clamp(24px, 4vw, 44px);
-      box-shadow: none;
-      z-index: 1;
-    }
+        h1, h2 {
+            font-family: "Dela Gothic One", sans-serif;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            color: var(--text-heading);
+        }
 
-    .eyebrow {
-      color: var(--mist);
-      text-transform: uppercase;
-      letter-spacing: 0.23em;
-      font-size: 0.76rem;
-      margin-bottom: 1rem;
-      font-weight: 500;
-    }
+        h3 {
+            font-family: "Dela Gothic One", sans-serif;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            color: var(--text-body);
+        }
 
-    .brand-tagline {
-      font-family: "Sora", system-ui, sans-serif;
-      font-size: clamp(1.2rem, 2.8vw, 1.6rem);
-      line-height: 1.35;
-      letter-spacing: 0.01em;
-      margin-bottom: 1.1rem;
-      font-weight: 600;
-      color: #f4f8ee;
-      text-shadow: 0 3px 14px rgba(0, 0, 0, 0.28);
-    }
+        h4, .subheading, .tag {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-body);
+        }
 
-    .subtitle {
-      color: #e7f5ed;
-      opacity: 0.96;
-      font-weight: 400;
-      font-size: clamp(1rem, 2.2vw, 1.14rem);
-      line-height: 1.55;
-      margin: 0 auto 1.25rem;
-      max-width: 64ch;
-    }
+        p {
+            font-family: "DM Sans", sans-serif;
+            color: var(--text-body);
+            font-size: 1.125rem;
+            font-weight: 400;
+        }
 
-    .zones {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 1.25rem;
-    }
+        a {
+            color: var(--text-heading);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
 
-    .zone {
-      border-radius: 999px;
-      padding: 0.7rem 1.2rem;
-      font-size: 0.92rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      font-weight: 600;
-      border: 1px solid rgba(244, 248, 238, 0.24);
-      background: rgba(244, 248, 238, 0.12);
-      color: #f4f8ee;
-      backdrop-filter: blur(2px);
-      box-shadow: 0 6px 20px rgba(6, 26, 15, 0.28);
-    }
+        a:hover {
+            color: var(--text-heading);
+            text-decoration: underline;
+        }
 
-    .conservation {
-      font-size: 0.9rem;
-      color: #d6ebdd;
-      opacity: 0.92;
-      margin-bottom: 1.6rem;
-    }
+        a.cta-button:hover,
+        a.glass-button:hover,
+        a.nav-logo:hover {
+            text-decoration: none;
+        }
 
-    .actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--accent-hover);
+            outline-offset: 2px;
+        }
 
-    .brand-logo-wrap {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
+        button:disabled,
+        input:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
 
-    .brand-logo {
-      width: min(460px, 78vw);
-      height: auto;
-      display: block;
-      background: transparent;
-      mix-blend-mode: screen;
-      opacity: 1;
-      filter: brightness(1.22) contrast(1.25) saturate(1.15) drop-shadow(0 14px 34px rgba(0, 0, 0, 0.3));
-    }
+        /* STRUCTURAL LAYOUT RULES */
+        .section {
+            padding: var(--section-pad-y) var(--page-pad);
+            position: relative;
+            text-align: center;
+        }
 
-    .btn {
-      border: 0;
-      border-radius: 999px;
-      padding: 0.82rem 1.3rem;
-      font-size: 0.94rem;
-      font-weight: 600;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+        .section-inner {
+            width: 100%;
+            max-width: var(--content-max);
+            margin: 0 auto;
+        }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--canopy-500), #2b7b4f);
-      color: var(--cream);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
-    }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2.5rem, 5vw, 6rem);
+            align-items: center;
+            justify-items: center;
+            text-align: center;
+        }
 
-    .btn-ghost {
-      background: rgba(244, 248, 238, 0.08);
-      color: var(--cream);
-      border: 1px solid rgba(244, 248, 238, 0.26);
-    }
-  </style>
+        .grid-2 > div {
+            width: 100%;
+        }
+
+        .section-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: clamp(2.5rem, 5vw, 4.5rem);
+            max-width: var(--content-max);
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .section-stack .section-copy {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .section-media {
+            width: 100%;
+            max-width: var(--content-max);
+        }
+
+        .section-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 12px;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: var(--divider-color);
+            width: 100%;
+        }
+
+        /* IMAGE EXCHANGES (Placeholder blocks mimicking exhibition frames) */
+        .photo-frame {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .photo-frame:has(img)::after {
+            display: none;
+        }
+
+        .photo-frame::after {
+            content: "FIELD PHOTOGRAPHY FRAME";
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-body);
+            letter-spacing: 0.2em;
+            opacity: 0.5;
+        }
+
+        /* BUTTONS & LINKS */
+        .cta-button {
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1.25rem 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-heading);
+            text-decoration: none;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            margin-top: 2.5rem;
+        }
+
+        .cta-button:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            color: var(--text-heading);
+            box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .cta-button:active {
+            transform: translateY(0);
+        }
+
+        /* Liquid glass Shop button */
+        .glass-button {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.15rem 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-heading);
+            text-decoration: none;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            animation: glass-tap-hint 7s ease-in-out infinite;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .glass-button::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                rgba(196, 168, 130, 0.14) 0%,
+                rgba(164, 139, 111, 0.04) 45%,
+                rgba(196, 168, 130, 0.1) 100%
+            );
+            pointer-events: none;
+        }
+
+        .glass-button::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(196, 168, 130, 0.35);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .glass-button:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            color: var(--text-heading);
+            box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .glass-button:active {
+            transform: scale(0.98);
+            animation: none;
+        }
+
+        .glass-button.is-clicked::after {
+            animation: glass-ripple 0.55s ease-out forwards;
+        }
+
+        @keyframes glass-tap-hint {
+            0%, 88%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+            92% {
+                transform: scale(0.98);
+            }
+            96% {
+                transform: scale(1.02);
+                box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        @keyframes glass-ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.6;
+            }
+            100% {
+                width: 280px;
+                height: 280px;
+                opacity: 0;
+            }
+        }
+
+        /* NAVIGATION Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            padding: max(1.25rem, var(--safe-top)) calc(var(--page-pad) + var(--safe-right)) 1.25rem calc(var(--page-pad) + var(--safe-left));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            z-index: 100;
+            background: transparent;
+            overflow: visible;
+        }
+
+        .nav-logo {
+            text-decoration: none;
+            line-height: 0;
+            min-height: var(--touch-min);
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+            mix-blend-mode: normal;
+        }
+
+        .nav-logo img {
+            width: 73px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 1px 2px rgba(28, 26, 23, 0.95)) drop-shadow(0 2px 10px rgba(28, 26, 23, 0.8));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: clamp(1.25rem, 3vw, 3rem);
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-heading);
+            text-decoration: none;
+            font-family: "Dela Gothic One", sans-serif;
+            font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+            font-weight: 600;
+            min-height: var(--touch-min);
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0;
+            text-shadow: var(--nav-text-shadow);
+            -webkit-tap-highlight-color: transparent;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-heading);
+            text-decoration: underline;
+        }
+
+        .nav-link:active {
+            color: var(--text-heading);
+        }
+
+        .nav-link--static {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .nav-link--static:hover {
+            color: var(--text-heading);
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .nav-toggle {
+            display: none;
+            width: var(--touch-min);
+            height: var(--touch-min);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-toggle:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-1px);
+        }
+
+        .nav-toggle span {
+            position: absolute;
+            left: 50%;
+            width: 18px;
+            height: 1.5px;
+            background: var(--text-heading);
+            transform: translateX(-50%);
+            box-shadow: var(--nav-text-shadow);
+            transition: transform 0.25s ease, top 0.25s ease, opacity 0.25s ease;
+        }
+
+        .nav-toggle span:nth-child(1) { top: 16px; }
+        .nav-toggle span:nth-child(2) { top: 21px; }
+        .nav-toggle span:nth-child(3) { top: 26px; }
+
+        .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+            top: 21px;
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+            top: 21px;
+            transform: translateX(-50%) rotate(-45deg);
+        }
+
+        .nav-mobile {
+            display: none;
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            left: auto;
+            width: 220px;
+            z-index: 1;
+            padding: 0.5rem;
+            background: transparent;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-mobile.is-open {
+            display: flex;
+        }
+
+        .nav-mobile[hidden] {
+            display: none !important;
+        }
+
+        .nav-mobile a,
+        .nav-mobile .nav-mobile-item {
+            color: var(--text-heading);
+            text-decoration: none;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 1rem 1.25rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            min-height: var(--touch-min);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-mobile a:hover {
+            color: var(--text-heading);
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+
+        .nav-mobile a:active {
+            transform: translateY(0);
+        }
+
+        .nav-mobile .nav-mobile-item--static {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        /* SECTION SPECIFIC CONFIGURATIONS */
+
+        /* 1. Hero Gallery Entrance */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            min-height: 100svh;
+            height: 100svh;
+            padding: calc(4.5rem + var(--safe-top)) var(--page-pad) max(2.5rem, var(--safe-bottom));
+            color: var(--text-heading);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-picture,
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 100vw;
+            height: 100%;
+            transform: translateX(-50%);
+        }
+
+        .hero-bg-picture {
+            z-index: 0;
+        }
+
+        .hero-bg-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            z-index: 0;
+        }
+
+        /* Mobile — vertical image: favour upper composition (logo + leopard) */
+        @media (max-width: 768px) {
+            .hero-bg-picture {
+                opacity: 1;
+            }
+
+            .hero-bg-image {
+                object-position: center top;
+                opacity: 1;
+            }
+
+            .hero-bg {
+                opacity: 0.4;
+            }
+        }
+
+        /* Tablet & desktop — 16:9 image */
+        @media (min-width: 769px) {
+            .hero-bg-image {
+                object-position: center center;
+            }
+        }
+
+        /* MacBook & 16:10 displays — image matches screen ratio, minimal crop */
+        @media (min-width: 769px) and (max-aspect-ratio: 8/5) {
+            .hero-bg-image {
+                object-position: center center;
+            }
+        }
+
+        .hero-bg {
+            opacity: 0.4;
+            background: linear-gradient(
+                to bottom,
+                rgba(28, 26, 23, 0.35) 0%,
+                rgba(28, 26, 23, 0.55) 45%,
+                rgba(28, 26, 23, 0.82) 100%
+            );
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            min-height: 0;
+            text-align: center;
+        }
+
+        .hero-bottom {
+            margin-top: auto;
+            width: 100%;
+            max-width: 36rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: clamp(0.25rem, 1vh, 0.5rem);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 7.25vw, 6.5rem);
+            line-height: 0.85;
+            white-space: nowrap;
+            color: var(--text-heading);
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-top: 1px solid var(--divider-color);
+            padding-top: 0.75rem;
+            gap: 0.625rem;
+            width: 100%;
+        }
+
+        .hero-meta .tagline {
+            line-height: 1.15;
+            margin: 0;
+        }
+
+        .hero-actions {
+            margin-top: 0.75rem;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .hero-actions .glass-button {
+            display: inline-flex;
+        }
+
+        .hero-description {
+            font-family: "DM Sans", sans-serif;
+            font-size: clamp(0.875rem, 1.6vw, 1.0625rem);
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--text-body);
+            text-transform: none;
+            letter-spacing: normal;
+            margin: 0;
+        }
+
+        .tagline {
+            font-size: clamp(1.2rem, 3vw, 2.5rem);
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-heading);
+        }
+
+        /* 2. The Field Story */
+        .story .section-media img {
+            max-height: min(78vh, 920px);
+            object-fit: contain;
+            object-position: center;
+        }
+
+        .story-text-container {
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .story h2 {
+            font-size: clamp(1.75rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+
+        .story p {
+            margin: 0 auto 1.5rem;
+            max-width: 520px;
+        }
+
+        /* 3. Core Zone vs Buffer Zone */
+        .zone-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .zones-header {
+            text-align: center;
+            max-width: min(700px, 100%);
+            margin: 0 auto clamp(3rem, 6vw, 6rem) auto;
+        }
+
+        .section > .grid-2 {
+            max-width: var(--content-max);
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .zones-header h2 {
+            font-size: clamp(1.75rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .zones-ideology {
+            max-width: var(--content-max);
+            margin: 0 auto clamp(3rem, 6vw, 4rem);
+            width: 100%;
+        }
+
+        .zones-ideology-intro {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto clamp(2.5rem, 5vw, 4rem);
+            padding: clamp(2.25rem, 4.5vw, 3.25rem);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .zones-ideology-intro h2 {
+            font-size: clamp(1.75rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .zones-ideology-intro p {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .zones-ideology-intro p + p,
+        .zone-block-copy p + p,
+        .conservation .section-copy p + p,
+        .unboxing .section-copy p + p {
+            margin-top: 1.25rem;
+        }
+
+        .zone-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: var(--content-max);
+            margin: 0 auto clamp(4rem, 8vw, 6rem);
+            width: 100%;
+        }
+
+        .zone-block:last-of-type {
+            margin-bottom: clamp(2rem, 4vw, 3rem);
+        }
+
+        .zone-block-copy {
+            width: 100%;
+            max-width: 720px;
+            margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+        }
+
+        .zone-block-copy .zone-title {
+            gap: 0.75rem;
+            margin-bottom: 1.75rem;
+            padding-bottom: 1.75rem;
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .zone-block-copy .zone-title h3 {
+            font-size: clamp(2rem, 4.5vw, 2.75rem);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+        }
+
+        .zone-block-copy .zone-title .subheading {
+            font-size: clamp(0.8125rem, 1.4vw, 0.9375rem);
+            letter-spacing: 0.14em;
+        }
+
+        .zone-block-copy p {
+            max-width: 100%;
+            margin: 0 auto;
+            font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+            line-height: 1.75;
+            color: var(--text-body);
+        }
+
+        .zones-ideology-closing {
+            max-width: 640px;
+            margin: 0 auto;
+            color: var(--text-heading);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(0.875rem, 1.6vw, 1rem);
+            font-weight: 500;
+            letter-spacing: 0.06em;
+        }
+
+        .zone-products {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .product-frame {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            aspect-ratio: 3 / 4;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 0.75rem;
+        }
+
+        .zone-products--stacked {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .zone-products--stacked .product-frame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            aspect-ratio: unset;
+            overflow: visible;
+        }
+
+        .zone-products--stacked .product-frame:first-child {
+            z-index: 2;
+            align-items: flex-start;
+            padding-top: 3%;
+        }
+
+        .zone-products--stacked .product-frame:nth-child(2) {
+            z-index: 1;
+            align-items: flex-end;
+            padding-bottom: 3%;
+        }
+
+        .zone-products--stacked .product-frame img {
+            width: 92%;
+            height: auto;
+            max-height: 82%;
+            object-fit: contain;
+            padding: 0;
+            filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.35));
+        }
+
+        .zone-images {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .zone-images img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.35));
+        }
+
+        .material-photos,
+        .unboxing .section-media {
+            max-width: min(420px, 82%);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .material-photos {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .sustainability .section-media img,
+        .unboxing .section-media img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.35));
+        }
+
+        .zone-title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.35rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .zone-card > .zone-title {
+            margin-top: 0;
+        }
+
+        .zone-card p {
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .zone-title h3 {
+            font-size: 1.5rem;
+        }
+
+        /* 4. Built Sustainably */
+        .photo-frame--placeholder {
+            min-height: min(42vw, 520px);
+        }
+
+        .spec-list {
+            margin-top: 3rem;
+            list-style: none;
+        }
+
+        .spec-item {
+            border-bottom: 1px solid var(--divider-color);
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.35rem;
+            text-align: center;
+        }
+
+        .spec-label {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 600;
+            color: var(--text-body);
+        }
+
+        .spec-value {
+            color: var(--text-body);
+            font-size: 1rem;
+        }
+
+        /* 5. The Conservation Promise (Jungle Theme Override) */
+        .conservation {
+            color: var(--text-body);
+            border-top: 1px solid rgba(74, 94, 58, 0.35);
+            border-bottom: 1px solid rgba(74, 94, 58, 0.35);
+        }
+
+        .conservation h2 {
+            color: var(--text-heading);
+        }
+
+        .conservation h3 {
+            color: var(--text-body);
+        }
+
+        .conservation p {
+            color: var(--text-body);
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sustainability .section-copy,
+        .unboxing .section-copy,
+        .conservation .section-copy {
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sustainability p,
+        .unboxing p,
+        .conservation p {
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 520px;
+        }
+
+        .conservation-stat {
+            width: 100%;
+            max-width: 640px;
+            text-align: center;
+        }
+
+        .conservation .subheading {
+            color: var(--conservation);
+        }
+
+        .stat-large {
+            font-family: "Dela Gothic One", sans-serif;
+            font-size: clamp(6rem, 15vw, 12rem);
+            line-height: 0.9;
+            color: var(--conservation);
+            margin-bottom: 1rem;
+        }
+
+        /* 6. The Unboxing */
+
+        /* 7. Closing Gallery Call to Action */
+        .closing-cta {
+            position: relative;
+            overflow: hidden;
+            color: var(--text-heading);
+            text-align: center;
+            padding: var(--section-pad-y) var(--page-pad);
+            padding-bottom: max(var(--section-pad-y), var(--safe-bottom));
+            min-height: 70vh;
+            min-height: 70dvh;
+            min-height: 70svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .closing-cta-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            z-index: 0;
+        }
+
+        .closing-cta-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(28, 26, 23, 0.55) 0%,
+                rgba(28, 26, 23, 0.72) 50%,
+                rgba(28, 26, 23, 0.88) 100%
+            );
+            z-index: 1;
+        }
+
+        .closing-cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .closing-cta h2 {
+            color: var(--text-heading);
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            line-height: 1.1;
+            margin-bottom: 2rem;
+        }
+
+        .drop-signup {
+            margin-top: 2.5rem;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .drop-signup-copy {
+            color: var(--text-body);
+            font-size: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .drop-signup-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .drop-signup input[type="email"] {
+            flex: 1 1 auto;
+            min-width: min(220px, 100%);
+            min-height: var(--touch-min);
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            color: var(--text-heading);
+            font-family: "DM Sans", sans-serif;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .drop-signup input[type="email"]::placeholder {
+            color: rgba(230, 223, 211, 0.55);
+        }
+
+        .drop-signup input[type="email"]:focus {
+            border-color: var(--glass-border-hover);
+            background: var(--glass-bg-hover);
+            box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .drop-signup button {
+            flex: 0 0 auto;
+            min-height: var(--touch-min);
+            padding: 1rem 1.75rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            color: var(--text-heading);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .drop-signup button:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .drop-signup button:active {
+            transform: translateY(0);
+        }
+
+        .drop-signup-msg {
+            margin-top: 1rem;
+            font-size: 0.9375rem;
+            color: var(--text-body);
+        }
+
+        .drop-signup-msg.is-success {
+            color: var(--conservation);
+        }
+
+        .drop-signup-msg.is-error {
+            color: var(--danger);
+        }
+
+        /* Desktop navigation — links visible in header */
+        @media (min-width: 769px) {
+            .nav-links {
+                display: flex;
+                margin-left: auto;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+
+        /* Tablet — iPad, small MacBook */
+        @media (max-width: 1024px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: clamp(2rem, 4vw, 3rem);
+            }
+
+            .zones-header {
+                margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+            }
+        }
+
+        /* Phone — iPhone and small Android */
+        @media (max-width: 768px) {
+            .nav-logo img {
+                width: 53px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-menu {
+                display: block;
+            }
+
+            .nav-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.25rem, 12vw, 4rem);
+                margin-bottom: 0.625rem;
+            }
+
+            .hero-meta {
+                padding-top: 0.625rem;
+                gap: 0.5rem;
+            }
+
+            .hero-description {
+                margin: 0;
+            }
+
+            .hero-actions {
+                margin-top: 0.625rem;
+            }
+
+            .hero-actions .glass-button {
+                width: 100%;
+                justify-content: center;
+                padding: 1.1rem 1.75rem;
+            }
+
+
+            .tagline {
+                font-size: clamp(0.95rem, 4.5vw, 1.25rem);
+            }
+
+            .hero-description {
+                font-size: clamp(0.8125rem, 3.5vw, 0.9375rem);
+            }
+
+            .zone-products {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+
+            .zone-products--stacked .product-frame img {
+                width: 96%;
+                max-height: 85%;
+            }
+
+            .spec-value {
+                font-size: 0.9375rem;
+            }
+
+            .conservation p {
+                font-size: 1.0625rem;
+            }
+
+            .stat-large {
+                font-size: clamp(4rem, 22vw, 6.5rem);
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .photo-frame--placeholder {
+                min-height: min(65vw, 400px);
+            }
+
+            .story .section-media img {
+                max-height: min(68vh, 640px);
+            }
+
+            .drop-signup-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .drop-signup input[type="email"],
+            .drop-signup button {
+                flex: 0 0 auto;
+                width: 100%;
+            }
+
+            .drop-signup input[type="email"] {
+                min-height: var(--touch-min);
+                height: auto;
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+            }
+
+            .drop-signup button {
+                padding: 0.75rem 1.25rem;
+            }
+
+            .cta-button {
+                margin-top: 1.75rem;
+                display: inline-block;
+                width: 100%;
+                max-width: 360px;
+                text-align: center;
+            }
+
+            .photo-frame::after {
+                font-size: 0.65rem;
+                letter-spacing: 0.12em;
+                text-align: center;
+                padding: 0 1rem;
+            }
+
+            .closing-cta h2 {
+                font-size: clamp(2rem, 9vw, 3rem);
+            }
+        }
+
+        /* Small phone — iPhone SE, mini */
+        @media (max-width: 390px) {
+            .hero h1 {
+                font-size: clamp(2rem, 12vw, 2.85rem);
+                margin-bottom: 1rem;
+            }
+
+            .zone-products {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Large MacBook / desktop */
+        @media (min-width: 1440px) {
+            :root {
+                --content-max: 1360px;
+            }
+
+            .hero-content {
+                max-width: var(--content-max);
+                margin: 0 auto;
+                width: 100%;
+            }
+        }
+
+        /* Landscape phone */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .hero {
+                min-height: 100svh;
+                height: 100svh;
+                padding-top: calc(4.5rem + var(--safe-top));
+                padding-bottom: 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: clamp(2rem, 8vh, 3.25rem);
+                margin-bottom: 0.5rem;
+            }
+
+            .hero-meta {
+                padding-top: 0.5rem;
+                gap: 0.375rem;
+            }
+
+            .hero-description {
+                margin: 0;
+            }
+
+            .hero-actions {
+                margin-top: 0.5rem;
+            }
+
+            .closing-cta {
+                min-height: auto;
+                padding-top: 4rem;
+                padding-bottom: 4rem;
+            }
+        }
+
+        @media (prefers-color-scheme: light), (prefers-color-scheme: dark) {
+            :root {
+                color-scheme: dark only;
+            }
+
+            body {
+                color: var(--text-body);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            .glass-button {
+                animation: none;
+            }
+
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body.nav-open {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
-  <section class="landing" aria-label="Wild Wild landing page">
-    <canvas id="birds" aria-hidden="true"></canvas>
-    <div class="texture" aria-hidden="true"></div>
-    <div class="jungle-glow" aria-hidden="true"></div>
-    <div class="content">
-      <div class="brand-logo-wrap">
-        <img id="brandLogo" class="brand-logo" src="./Logo/Wild Wild Logo Transparent Background.png" alt="Wild Wild logo" />
-      </div>
-      <p class="brand-tagline">Wear the wild. Protect the wild.</p>
-      <p class="subtitle">
-        Wild Wild is a design-led wildlife apparel brand inspired by real moments from the wild.
-        Every graphic starts as a real wildlife photography story and is transformed into wearable design.
-      </p>
-      <div class="zones" aria-label="Product zones">
-        <span class="zone">Core Zone</span>
-        <span class="zone">Wild Zone</span>
-      </div>
-      <p class="conservation">10% of profits support wildlife protection organizations, including Wildlife SOS.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="#">Shop Now</a>
-        <a class="btn btn-ghost" href="#">View Impact</a>
-      </div>
-    </div>
-  </section>
 
-  <script>
-    const logoImage = document.getElementById("brandLogo");
+    <header>
+        <a href="./" class="nav-logo" aria-label="Wild Wild home">
+            <img src="./Logo/WW%20Logo.png" alt="Wild Wild" width="4861" height="6250" />
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+            <a href="#story" class="nav-link">Origin</a>
+            <a href="#philosophy" class="nav-link">Zones</a>
+            <a href="#conservation" class="nav-link">Impact</a>
+            <a href="./shop.html" class="nav-link">Shop</a>
+        </nav>
+        <div class="nav-menu">
+            <button class="nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
+                <span></span><span></span><span></span>
+            </button>
+            <nav class="nav-mobile" id="navMobile" aria-label="Mobile navigation" hidden>
+                <a href="#story">Origin</a>
+                <a href="#philosophy">Zones</a>
+                <a href="#conservation">Impact</a>
+                <a href="./shop.html">Shop</a>
+            </nav>
+        </div>
+    </header>
 
-    function knockOutWhiteBackground(img) {
-      try {
-        const c = document.createElement("canvas");
-        const cx = c.getContext("2d", { willReadFrequently: true });
-        c.width = img.naturalWidth;
-        c.height = img.naturalHeight;
-        cx.drawImage(img, 0, 0);
+    <section class="hero">
+        <picture class="hero-bg-picture">
+            <source
+                media="(min-width: 769px) and (max-aspect-ratio: 8/5)"
+                srcset="./assets/hero-leopard-16x10.jpeg"
+            />
+            <source
+                media="(min-width: 769px)"
+                srcset="./assets/hero-leopard-16x9.jpeg"
+            />
+            <img
+                class="hero-bg-image"
+                src="./assets/hero-leopard-vertical.png"
+                alt=""
+                aria-hidden="true"
+                width="3900"
+                height="5200"
+            />
+        </picture>
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-bottom">
+                <h1>WILD WILD</h1>
+                <div class="hero-meta">
+                    <div class="tagline">Defend The Habitat</div>
+                    <p class="hero-description">A sustainable, genderless brand born from India's forests — donating 20% of profits to Indian wildlife conservation</p>
+                </div>
+                <div class="hero-actions">
+                    <a href="./shop.html" class="glass-button" id="shopWildBtn">Shop The Wild</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        const frame = cx.getImageData(0, 0, c.width, c.height);
-        const px = frame.data;
+    <section id="story" class="section story">
+        <div class="section-stack">
+            <div class="section-copy story-text-container">
+                <h2>Not Designed. Documented.</h2>
+                <p>Wild Wild was not conceived in a boardroom. It was conceived in the field. On a family wildlife-photography trip to Rajaji National Park, the founder noticed something simple but telling about what people were wearing inside one of India's great forests.</p>
+                <p>What people wore fell into two camps. At one end, plain military-style camouflage — dull, generic, and out of place. At the other, at best, a good-quality but completely blank T-shirt: well-made, but saying nothing, representing nothing, and carrying none of the beauty or vastness of the Indian wildlife all around them.</p>
+                <p>There was simply no apparel made for the people who genuinely love these places — nothing that let them wear the wild they had come to witness.</p>
+                <p>Wild Wild was built on a single belief: every Indian species has a story worth wearing.</p>
+            </div>
+            <figure class="section-media">
+                <img
+                    src="./assets/field-photography-leopard.png"
+                    alt="Leopard walking through wild grassland — original field photography"
+                    loading="lazy"
+                    width="1024"
+                    height="682"
+                />
+            </figure>
+        </div>
+    </section>
 
-        for (let i = 0; i < px.length; i += 4) {
-          const r = px[i];
-          const g = px[i + 1];
-          const b = px[i + 2];
-          const max = Math.max(r, g, b);
-          const min = Math.min(r, g, b);
-          const sat = max === 0 ? 0 : (max - min) / max;
-          const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    <div class="divider"></div>
 
-          // Fully remove white/off-white matte backgrounds.
-          if (luminance > 192 && sat < 0.24) {
-            px[i + 3] = 0;
-          }
-        }
+    <section id="philosophy" class="section zones">
+        <div class="zones-ideology">
+            <div class="zones-ideology-intro">
+                <h2>The Zone System</h2>
+                <p>Wild Wild's product architecture is inspired by — and named after — the zoning framework of Indian national parks and tiger reserves. In a reserve, the Core Zone is the protected innermost zone where wildlife lives undisturbed. The Buffer Zone is the outer ring where human activity and the wild come closest to meeting.</p>
+                <p>Wild Wild borrows these names directly. Two zones. Two palettes. One brand.</p>
+                <p>Both zones share the same GOTS-certified organic cotton, the same 220+ GSM construction, the same Hahnemühle fine-art print insert. They differ only in palette — because palette is the only thing that should change between the forest and the city.</p>
+            </div>
+        </div>
 
-        cx.putImageData(frame, 0, 0);
-        img.src = c.toDataURL("image/png");
-      } catch (err) {
-        // Keep original logo if processing is blocked.
-      }
-    }
+        <div class="zone-block">
+            <div class="zone-block-copy">
+                <div class="zone-title">
+                    <h3>Core Zone</h3>
+                    <span class="subheading" style="color: var(--chital-dust);">Safari &amp; Everyday Wear</span>
+                </div>
+                <p>The innermost zone. Designed broadly — for wildlife professionals, photographers, safari travellers, and nature enthusiasts — and for anyone who simply wants beautiful, considered everyday wear.</p>
+                <p>The Core Zone deploys muted, low-contrast earth tones drawn from Indian forests, riverbeds, and dry-season landscapes: Chital Dust, Bear Mauve, Mugger Slate, Muntjac Umber, Jungle Canopy, Gaur Espresso, Snow Leopard Ash.</p>
+                <p>These colours keep your visual profile calm in the field — not because they hide you, but because they respect the wildlife around you. Worn anywhere. Informed by the field.</p>
+            </div>
+            <div class="zone-images">
+                <img src="./T-Shirts%20On%20Landing%20Page/Heera%20Core%20Zone.png" alt="Heira — Core Zone tee, Bear Mauve" loading="lazy" width="4688" height="2344" />
+                <img src="./T-Shirts%20On%20Landing%20Page/Egrets%20Core%20Zone.png" alt="The Egrets — Core Zone tee, Snow Leopard Ash" loading="lazy" width="4688" height="2344" />
+            </div>
+        </div>
 
-    if (logoImage) {
-      if (logoImage.complete) {
-        knockOutWhiteBackground(logoImage);
-      } else {
-        logoImage.addEventListener("load", () => knockOutWhiteBackground(logoImage), { once: true });
-      }
-    }
+        <div class="zone-block">
+            <div class="zone-block-copy">
+                <div class="zone-title">
+                    <h3>Buffer Zone</h3>
+                    <span class="subheading" style="color: var(--bear-mauve);">Lifestyle &amp; Urban Streetwear</span>
+                </div>
+                <p>The outer zone. The lifestyle and urban streetwear line for Gen Z and millennial consumers. Identical organic-cotton construction, identical Hahnemühle prints — a radically different, high-saturation aesthetic.</p>
+                <p>The Buffer Zone's palette is drawn from India's most vivid wildlife: the Bengal tiger's gold, the Himalayan Monal's iridescent purple, the Kabini black panther's near-black, the Sarus crane's deep crimson. Panther Midnight, Bengal Ochre, Monal Violet, Sarus Crimson, Roller Lilac, Verditer Frost, Hornbill Ivory.</p>
+                <p>Bold, saturated, on-trend — and chosen precisely because that intensity belongs in the city, not the field.</p>
+            </div>
+            <div class="zone-images">
+                <img src="./T-Shirts%20On%20Landing%20Page/Jackal%20Buffer%20Zone.png" alt="Jackal — Buffer Zone tee, Panther Midnight" loading="lazy" width="4688" height="2344" />
+                <img src="./T-Shirts%20On%20Landing%20Page/Sarus%20Buffer%20Zone.png" alt="Sarus — Buffer Zone tee, Panther Midnight" loading="lazy" width="4688" height="2344" />
+            </div>
+        </div>
 
-    const canvas = document.getElementById("birds");
-    const ctx = canvas.getContext("2d");
-    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+        <p class="zones-ideology-closing">Same quality. Same photography. Same price. Different world.</p>
+    </section>
 
-    const flowers = [];
-    const flowerCount = 48;
-    const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
+    <div class="divider"></div>
 
-    function resizeCanvas() {
-      canvas.width = Math.floor(window.innerWidth * dpr);
-      canvas.height = Math.floor(window.innerHeight * dpr);
-      canvas.style.width = window.innerWidth + "px";
-      canvas.style.height = window.innerHeight + "px";
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
+    <section id="sustainability" class="section sustainability">
+        <div class="section-stack">
+            <div class="section-copy">
+                <h2>Material Integrity</h2>
+                <p class="subheading" style="color: var(--chital-dust); margin-bottom: 1.25rem;">Museum Standards. Wearable Form.</p>
+                <p>We treat our garments with the exact structural respect given to fine archival artwork. Our entire manufacturing chain is located within India — the same country where the wildlife on these shirts actually lives.</p>
 
-    function spawnSunflower() {
-      return {
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.92,
-        vy: (Math.random() - 0.5) * 0.92,
-        size: 11 + Math.random() * 12,
-        sway: Math.random() * Math.PI * 2,
-        alpha: 0.42 + Math.random() * 0.26,
-        speedLimit: 1.65 + Math.random() * 0.75,
-        petalCount: 20 + Math.floor(Math.random() * 9),
-        spin: Math.random() * Math.PI * 2,
-        spinRate: (Math.random() - 0.5) * 0.018,
-        petalHue: 40 + Math.random() * 16,
-        petalTipHue: 48 + Math.random() * 12
-      };
-    }
+                <ul class="spec-list">
+                    <li class="spec-item">
+                        <span class="spec-label">Base Fabric</span>
+                        <span class="spec-value">100% GOTS-Certified Organic Cotton</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Weight</span>
+                        <span class="spec-value">220–240 GSM Heavyweight Premium Knit</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Print Medium</span>
+                        <span class="spec-value">OEKO-TEX Certified Water-Based Inks</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Texture</span>
+                        <span class="spec-value">Zero-PVC High-Density Eco-Puff + DTG Combination</span>
+                    </li>
+                    <li class="spec-item">
+                        <span class="spec-label">Art Print Insert</span>
+                        <span class="spec-value">Hahnemühle Bamboo or Agave Fine-Art Paper (FSC &amp; PEFC certified, acid-free, vegan)</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="section-media material-photos">
+                <img
+                    src="./assets/material-integrity-warli-print.png"
+                    alt="Warli art print on heavyweight organic cotton — garment back detail"
+                    loading="lazy"
+                    width="1024"
+                    height="1024"
+                />
+                <img
+                    src="./assets/material-integrity-ahankar-print.png"
+                    alt="अहंकार neckline print detail on organic cotton garment"
+                    loading="lazy"
+                    width="1024"
+                    height="1024"
+                />
+            </div>
+        </div>
+    </section>
 
-    function initFlowers() {
-      flowers.length = 0;
-      for (let i = 0; i < flowerCount; i += 1) {
-        flowers.push(spawnSunflower());
-      }
-    }
+    <section id="conservation" class="section conservation">
+        <div class="section-stack">
+            <div class="section-copy">
+                <h2>20% of Every Profit. No Exceptions.</h2>
+                <p class="subheading" style="color: var(--chital-dust); margin-bottom: 1.25rem;">Defend the Habitat.</p>
+                <p>This is not a slogan borrowed from marketing. "Defend the Habitat" is what this brand does — on the P&amp;L, in the field, with every sale. The tagline came before the brand name was finalised. It is the entire reason Wild Wild exists.</p>
+                <p>We do not engage in vague corporate philanthropy. Sustainability without immediate, verifiable action is compromised.</p>
+                <p>Exactly 20% of all net profits generated across every Wild Wild drop are transferred directly to Wildlife SOS — one of India's largest and most credible wildlife protection organisations. They run the world's largest sloth bear rescue facilities, rescue and rehabilitate leopards from human-wildlife conflict zones, and provide lifetime care for rescued elephants. They ended the centuries-old dancing bear practice in India.</p>
+                <p>Their 80G certification means every rupee donated is tax-deductible and publicly documented. Our customers can see exactly where their contribution goes.</p>
+            </div>
+            <div class="conservation-stat">
+                <div class="stat-large">20%</div>
+                <span class="subheading" style="color: var(--cream); font-size: 1rem;">Of Net Profits — Permanently Pledged to Wildlife SOS</span>
+            </div>
+        </div>
+    </section>
 
-    function drawSunflower(flower) {
-      const s = flower.size;
-      const sway = Math.sin(flower.sway) * 0.07;
-      const coreR = s * (0.33 + sway);
-      const petalLen = s * 0.98;
-      const petalW = s * 0.24;
-      const n = flower.petalCount;
-      const ph = flower.petalHue;
-      const pth = flower.petalTipHue;
+    <section class="section unboxing">
+        <div class="section-stack">
+            <div class="section-copy">
+                <h2>The Unboxing</h2>
+                <p class="subheading" style="color: var(--chital-dust); margin-bottom: 1.25rem;">Every Box a Gallery Segment.</p>
+                <p>Opening a Wild Wild shipment is an invitation to historical field documentation. Every order arrives in fully plastic-free, certified sustainable packaging.</p>
+                <p>Accompanying your garment is a gallery-grade Hahnemühle fine-art print — the original, uncropped field photograph that became your design, printed on FSC-certified Bamboo or Agave paper. On the reverse: the species' current survival metrics in the wild, and the exact camera telemetry from the moment of capture — focal length, shutter speed, lighting conditions.</p>
+                <p>Enclosed in a handmade Sage Green 300 GSM cotton-rag envelope from Sri Aurobindo Ashram, sealed by hand with a custom wood-mount stamp.</p>
+                <p>Every box tells the story. The garment is the photograph.</p>
+            </div>
+            <div class="section-media">
+                <img
+                    src="./assets/unboxing-packaging.png"
+                    alt="Wild Wild sustainable kraft mailer packaging — plastic-free unboxing"
+                    loading="lazy"
+                    width="1024"
+                    height="1024"
+                />
+            </div>
+        </div>
+    </section>
 
-      ctx.save();
-      ctx.translate(flower.x, flower.y);
-      ctx.rotate(flower.spin);
-      ctx.globalAlpha = flower.alpha;
-      ctx.shadowBlur = 0;
-      ctx.shadowColor = "transparent";
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
+    <section id="shop" class="closing-cta">
+        <img
+            class="closing-cta-bg"
+            src="./assets/closing-forest.png"
+            alt=""
+            aria-hidden="true"
+        />
+        <div class="closing-cta-overlay" aria-hidden="true"></div>
+        <div class="closing-cta-content">
+            <h2>Defend The Habitat</h2>
+            <a href="./shop.html" class="cta-button">Shop The Wild</a>
+            <form class="drop-signup" id="dropSignup" novalidate>
+                <p class="drop-signup-copy">Sign up to hear about our next drop first — before it goes live.</p>
+                <div class="drop-signup-row">
+                    <input
+                        type="email"
+                        name="email"
+                        id="dropEmail"
+                        placeholder="Your email address"
+                        autocomplete="email"
+                        required
+                    />
+                    <button type="submit">Join the Drop</button>
+                </div>
+                <p class="drop-signup-msg" id="dropSignupMsg" role="status" aria-live="polite" hidden></p>
+            </form>
+        </div>
+    </section>
 
-      for (let i = 0; i < n; i += 1) {
-        ctx.save();
-        ctx.rotate((i / n) * Math.PI * 2);
-        const lg = ctx.createLinearGradient(coreR * 0.7, 0, petalLen, 0);
-        lg.addColorStop(0, `hsla(${ph - 8}, 86%, 40%, 1)`);
-        lg.addColorStop(0.5, `hsla(${ph}, 92%, 56%, 1)`);
-        lg.addColorStop(1, `hsla(${pth}, 96%, 72%, 1)`);
-        ctx.beginPath();
-        ctx.moveTo(coreR * 0.82, 0);
-        ctx.quadraticCurveTo(petalLen * 0.42, -petalW, petalLen, 0);
-        ctx.quadraticCurveTo(petalLen * 0.42, petalW, coreR * 0.82, 0);
-        ctx.closePath();
-        ctx.fillStyle = lg;
-        ctx.fill();
-        ctx.strokeStyle = `hsla(${ph - 14}, 72%, 34%, 0.32)`;
-        ctx.lineWidth = Math.max(0.45, s * 0.028);
-        ctx.stroke();
-        ctx.restore();
-      }
+    <script>
+        (function () {
+            var shopBtn = document.getElementById("shopWildBtn");
+            if (shopBtn) {
+                shopBtn.addEventListener("click", function () {
+                    shopBtn.classList.remove("is-clicked");
+                    void shopBtn.offsetWidth;
+                    shopBtn.classList.add("is-clicked");
+                });
+            }
 
-      const dg = ctx.createRadialGradient(-s * 0.1, -s * 0.1, s * 0.02, 0, 0, coreR);
-      dg.addColorStop(0, "hsla(40, 48%, 32%, 1)");
-      dg.addColorStop(0.55, "hsla(28, 58%, 20%, 1)");
-      dg.addColorStop(1, "hsla(18, 72%, 12%, 1)");
-      ctx.beginPath();
-      ctx.arc(0, 0, coreR, 0, Math.PI * 2);
-      ctx.fillStyle = dg;
-      ctx.fill();
-      ctx.strokeStyle = "hsla(22, 58%, 14%, 0.88)";
-      ctx.lineWidth = Math.max(0.7, s * 0.038);
-      ctx.stroke();
+            var navToggle = document.getElementById("navToggle");
+            var navMobile = document.getElementById("navMobile");
 
-      ctx.fillStyle = "hsla(38, 42%, 32%, 0.55)";
-      const dots = 32;
-      for (let d = 0; d < dots; d += 1) {
-        const a = (d / dots) * Math.PI * 8 + flower.spin * 1.3;
-        const rr = coreR * (0.22 + (d % 6) * 0.1);
-        ctx.beginPath();
-        ctx.arc(Math.cos(a) * rr, Math.sin(a) * rr, Math.max(0.55, s * 0.026), 0, Math.PI * 2);
-        ctx.fill();
-      }
+            function closeNav() {
+                if (!navToggle || !navMobile) return;
+                navToggle.setAttribute("aria-expanded", "false");
+                navToggle.setAttribute("aria-label", "Open menu");
+                navMobile.classList.remove("is-open");
+                navMobile.hidden = true;
+                document.body.classList.remove("nav-open");
+            }
 
-      ctx.restore();
-    }
+            function openNav() {
+                if (!navToggle || !navMobile) return;
+                navToggle.setAttribute("aria-expanded", "true");
+                navToggle.setAttribute("aria-label", "Close menu");
+                navMobile.classList.add("is-open");
+                navMobile.hidden = false;
+                document.body.classList.add("nav-open");
+            }
 
-    function tick() {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            if (navToggle && navMobile) {
+                navToggle.addEventListener("click", function () {
+                    var isOpen = navToggle.getAttribute("aria-expanded") === "true";
+                    if (isOpen) closeNav();
+                    else openNav();
+                });
 
-      for (let i = 0; i < flowers.length; i += 1) {
-        const flower = flowers[i];
-        const dx = pointer.x - flower.x;
-        const dy = pointer.y - flower.y;
-        const dist = Math.hypot(dx, dy) || 1;
+                navMobile.querySelectorAll("a").forEach(function (link) {
+                    link.addEventListener("click", closeNav);
+                });
 
-        const attraction = pointer.active ? 0.0065 : 0.0024;
-        flower.vx += (dx / dist) * attraction;
-        flower.vy += (dy / dist) * attraction;
+                window.addEventListener("resize", function () {
+                    if (window.innerWidth > 768) closeNav();
+                });
+            }
 
-        flower.vx += (Math.random() - 0.5) * 0.007;
-        flower.vy += (Math.random() - 0.5) * 0.007;
+            var form = document.getElementById("dropSignup");
+            var emailInput = document.getElementById("dropEmail");
+            var msg = document.getElementById("dropSignupMsg");
 
-        const speed = Math.hypot(flower.vx, flower.vy);
-        if (speed > flower.speedLimit) {
-          flower.vx = (flower.vx / speed) * flower.speedLimit;
-          flower.vy = (flower.vy / speed) * flower.speedLimit;
-        }
+            if (!form || !emailInput || !msg) return;
 
-        flower.x += flower.vx;
-        flower.y += flower.vy;
-        flower.sway += 0.07 + speed * 0.11;
-        flower.spin += flower.spinRate + speed * 0.0045;
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                var email = emailInput.value.trim();
 
-        if (flower.x < -40) flower.x = window.innerWidth + 40;
-        if (flower.x > window.innerWidth + 40) flower.x = -40;
-        if (flower.y < -40) flower.y = window.innerHeight + 40;
-        if (flower.y > window.innerHeight + 40) flower.y = -40;
+                msg.hidden = false;
+                msg.classList.remove("is-success", "is-error");
 
-        drawSunflower(flower);
-      }
+                if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    msg.textContent = "Please enter a valid email address.";
+                    msg.classList.add("is-error");
+                    return;
+                }
 
-      requestAnimationFrame(tick);
-    }
+                try {
+                    var list = JSON.parse(localStorage.getItem("wildwild-drop-list") || "[]");
+                    if (!list.includes(email)) list.push(email);
+                    localStorage.setItem("wildwild-drop-list", JSON.stringify(list));
+                } catch (err) {}
 
-    window.addEventListener("pointermove", (event) => {
-      pointer.x = event.clientX;
-      pointer.y = event.clientY;
-      pointer.active = true;
-    });
+                msg.textContent = "You're on the list. We'll reach out before the next drop.";
+                msg.classList.add("is-success");
+                emailInput.value = "";
+            });
+        })();
+    </script>
 
-    window.addEventListener("pointerdown", (event) => {
-      pointer.x = event.clientX;
-      pointer.y = event.clientY;
-      pointer.active = true;
-    });
-
-    window.addEventListener("mouseleave", () => {
-      pointer.active = false;
-    });
-
-    window.addEventListener("resize", resizeCanvas);
-
-    resizeCanvas();
-    initFlowers();
-    tick();
-  </script>
 </body>
 </html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Wild Wild — Shop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dela+Gothic+One&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-color: #A58B6F #1C1A17;
+            color-scheme: dark only;
+        }
+
+        :root {
+            --text-heading: #E6DFD3;
+            --text-body: #E6DFD3;
+            --accent: #A58B6F;
+            --glass-bg: rgba(164, 139, 111, 0.12);
+            --glass-bg-hover: rgba(164, 139, 111, 0.22);
+            --glass-border: rgba(164, 139, 111, 0.25);
+            --glass-border-hover: rgba(164, 139, 111, 0.45);
+            --card-bg: rgba(42, 36, 32, 0.6);
+            --card-border: rgba(164, 139, 111, 0.15);
+            --divider-color: rgba(164, 139, 111, 0.2);
+            --species-muted: #C4B8A8;
+            --page-pad: clamp(1.25rem, 5vw, 6rem);
+            --content-max: 1280px;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+        }
+
+        body {
+            font-family: "DM Sans", sans-serif;
+            background: radial-gradient(
+                ellipse at 20% 0%,
+                #323C28 0%,
+                #2A2420 25%,
+                #1C1A17 50%,
+                #2A1F1A 70%,
+                #4B3621 100%
+            );
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #leafCanvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .shop-page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: calc(0.5rem + var(--safe-top)) var(--page-pad) calc(3rem + var(--safe-bottom));
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            line-height: 0;
+            text-decoration: none;
+            margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
+        }
+
+        .back-link img {
+            width: 92px;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 1px 2px rgba(28, 26, 23, 0.95)) drop-shadow(0 2px 10px rgba(28, 26, 23, 0.8));
+        }
+
+        .back-link:hover {
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        .shop-header {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto clamp(2rem, 5vw, 3rem);
+            padding-top: 0;
+        }
+
+        .shop-header h1 {
+            font-family: "Dela Gothic One", sans-serif;
+            font-weight: 400;
+            font-size: clamp(2rem, 5vw, 3.25rem);
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+            color: var(--text-heading);
+            margin-bottom: 1rem;
+        }
+
+        .shop-header .subheading {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 400;
+            font-size: clamp(0.95rem, 2vw, 1.125rem);
+            text-transform: none;
+            letter-spacing: 0.02em;
+            color: var(--text-body);
+            line-height: 1.65;
+            max-width: 540px;
+            margin: 0 auto 1rem;
+        }
+
+        .shop-header .body-line {
+            font-family: "DM Sans", sans-serif;
+            font-size: clamp(0.75rem, 1.6vw, 0.875rem);
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            color: var(--accent);
+            line-height: 1.6;
+            max-width: 640px;
+            margin: 0 auto 2rem;
+        }
+
+        .shop-divider {
+            height: 1px;
+            width: min(320px, 80%);
+            margin: 0 auto;
+            background: var(--divider-color);
+            border: none;
+        }
+
+        .shop-grid-wrap {
+            max-width: var(--content-max);
+            margin: 0 auto;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2rem, 4vw, 3.5rem);
+        }
+
+        .shop-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .zone-label-glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            padding: 12px 28px;
+            display: inline-block;
+            width: fit-content;
+            max-width: 100%;
+            margin-bottom: 0.25rem;
+        }
+
+        .zone-label {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--accent);
+            margin-bottom: 0.25rem;
+        }
+
+        .zone-label-glass .zone-label {
+            margin-bottom: 0.35rem;
+        }
+
+        .zone-descriptor {
+            font-family: "DM Sans", sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            color: var(--text-body);
+            line-height: 1.4;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            padding: clamp(1.25rem, 3vw, 1.75rem);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .product-image-placeholder {
+            aspect-ratio: 1;
+            width: 100%;
+            border: 1px dashed rgba(164, 139, 111, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "DM Sans", sans-serif;
+            font-size: 0.875rem;
+            color: rgba(230, 223, 211, 0.45);
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .product-image-placeholder--photo {
+            padding: 0.75rem;
+            border: none;
+            display: block;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image-placeholder--photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .product-image-placeholder--video {
+            padding: 0;
+            border: none;
+            display: block;
+            overflow: hidden;
+        }
+
+        .product-image-placeholder--video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+            transition: filter 0.4s ease;
+        }
+
+        .product-card:hover .product-image-placeholder--video video {
+            filter: brightness(1.08) saturate(1.1);
+        }
+
+        .product-name {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-heading);
+        }
+
+        .product-colourway {
+            font-family: "DM Sans", sans-serif;
+            font-size: 0.9375rem;
+            color: var(--accent);
+        }
+
+        .product-species {
+            font-family: "DM Sans", sans-serif;
+            font-style: italic;
+            font-size: 0.875rem;
+            color: var(--species-muted);
+        }
+
+        .product-price {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-heading);
+        }
+
+        .size-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .size-pill {
+            min-width: 2.5rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 999px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--text-heading);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .size-pill:hover,
+        .size-pill.is-selected {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+        }
+
+        .glass-button {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-heading);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            margin-top: 0.25rem;
+        }
+
+        .glass-button::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                135deg,
+                rgba(196, 168, 130, 0.14) 0%,
+                rgba(164, 139, 111, 0.04) 45%,
+                rgba(196, 168, 130, 0.1) 100%
+            );
+            pointer-events: none;
+        }
+
+        .glass-button:hover {
+            background: var(--glass-bg-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .shop-footer {
+            text-align: center;
+            max-width: 640px;
+            margin: clamp(4rem, 10vw, 6rem) auto 0;
+            font-family: "DM Sans", sans-serif;
+            font-style: italic;
+            font-size: 0.8125rem;
+            color: var(--accent);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .shop-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #leafCanvas {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="leafCanvas" aria-hidden="true"></canvas>
+
+    <div class="shop-page">
+        <a href="./index.html" class="back-link" aria-label="Back to Wild Wild home">
+            <img src="./Logo/Wild%20Wild%20Logo%20Transparent%20Background.png" alt="Wild Wild" width="4861" height="6250" />
+        </a>
+
+        <header class="shop-header">
+            <h1>Drop 01</h1>
+            <p class="subheading">One genderless silhouette. Two zones. Real Indian wildlife photography — worn anywhere.</p>
+            <p class="body-line">GOTS-Certified Organic Cotton · 220+ GSM · OEKO-TEX Water-Based Inks · Ships with a Hahnemühle Fine-Art Print</p>
+            <hr class="shop-divider">
+        </header>
+
+        <div class="shop-grid-wrap">
+            <div class="shop-grid">
+                <div class="shop-column">
+                    <div class="zone-label-glass">
+                        <p class="zone-label">Core Zone</p>
+                        <p class="zone-descriptor">Safari &amp; Everyday Wear</p>
+                    </div>
+
+                    <article class="product-card" data-product="heera">
+                        <div class="product-image-placeholder product-image-placeholder--photo">
+                            <img src="./T-Shirts%20On%20Landing%20Page/Heera%20Core%20Zone.png" alt="Heira — Core Zone tee, Bear Mauve" loading="lazy" width="4688" height="2344" />
+                        </div>
+                        <h2 class="product-name">Heera</h2>
+                        <p class="product-colourway">Bear Mauve</p>
+                        <p class="product-species">Indian Leopard — Rajaji National Park</p>
+                        <p class="product-price">₹2,499</p>
+                        <div class="size-row" role="group" aria-label="Select size for Heera">
+                            <button type="button" class="size-pill" data-size="S">S</button>
+                            <button type="button" class="size-pill is-selected" data-size="M">M</button>
+                            <button type="button" class="size-pill" data-size="L">L</button>
+                            <button type="button" class="size-pill" data-size="XL">XL</button>
+                            <button type="button" class="size-pill" data-size="XXL">XXL</button>
+                        </div>
+                        <button type="button" class="glass-button">Add to Cart</button>
+                    </article>
+
+                    <div class="zone-label-glass">
+                        <p class="zone-label">Core Zone</p>
+                        <p class="zone-descriptor">Safari &amp; Everyday Wear</p>
+                    </div>
+
+                    <article class="product-card" data-product="egrets">
+                        <div class="product-image-placeholder product-image-placeholder--photo">
+                            <img src="./T-Shirts%20On%20Landing%20Page/Egrets%20Core%20Zone.png" alt="The Egrets — Core Zone tee, Snow Leopard Ash" loading="lazy" width="4688" height="2344" />
+                        </div>
+                        <h2 class="product-name">The Egrets</h2>
+                        <p class="product-colourway">Snow Leopard Ash</p>
+                        <p class="product-species">Little Egrets — Manglajodi</p>
+                        <p class="product-price">₹2,499</p>
+                        <div class="size-row" role="group" aria-label="Select size for The Egrets">
+                            <button type="button" class="size-pill" data-size="S">S</button>
+                            <button type="button" class="size-pill is-selected" data-size="M">M</button>
+                            <button type="button" class="size-pill" data-size="L">L</button>
+                            <button type="button" class="size-pill" data-size="XL">XL</button>
+                            <button type="button" class="size-pill" data-size="XXL">XXL</button>
+                        </div>
+                        <button type="button" class="glass-button">Add to Cart</button>
+                    </article>
+                </div>
+
+                <div class="shop-column">
+                    <div class="zone-label-glass">
+                        <p class="zone-label">Buffer Zone</p>
+                        <p class="zone-descriptor">Lifestyle &amp; Urban Streetwear</p>
+                    </div>
+
+                    <article class="product-card" data-product="sarus">
+                        <div class="product-image-placeholder product-image-placeholder--video">
+                            <video autoplay muted playsinline loop="false" preload="auto" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Sarus Crane product video">
+                                <source src="./Videos/Sarus &amp; Water_Vertical.mp4" type="video/mp4">
+                                <source src="./Videos/Sarus &amp; Water_Vertical.mov" type="video/quicktime">
+                            </video>
+                        </div>
+                        <h2 class="product-name">Sarus</h2>
+                        <p class="product-colourway">Panther Midnight</p>
+                        <p class="product-species">Sarus Crane</p>
+                        <p class="product-price">₹2,499</p>
+                        <div class="size-row" role="group" aria-label="Select size for Sarus">
+                            <button type="button" class="size-pill" data-size="S">S</button>
+                            <button type="button" class="size-pill is-selected" data-size="M">M</button>
+                            <button type="button" class="size-pill" data-size="L">L</button>
+                            <button type="button" class="size-pill" data-size="XL">XL</button>
+                            <button type="button" class="size-pill" data-size="XXL">XXL</button>
+                        </div>
+                        <button type="button" class="glass-button">Add to Cart</button>
+                    </article>
+
+                    <div class="zone-label-glass">
+                        <p class="zone-label">Buffer Zone</p>
+                        <p class="zone-descriptor">Lifestyle &amp; Urban Streetwear</p>
+                    </div>
+
+                    <article class="product-card" data-product="jackal">
+                        <div class="product-image-placeholder product-image-placeholder--video">
+                            <video autoplay muted playsinline loop="false" preload="auto" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Indian Jackal product video">
+                                <source src="./Videos/Indian Jackal Blender Video.mp4" type="video/mp4">
+                                <source src="./Videos/Indian Jackal Blender Video.mov" type="video/quicktime">
+                            </video>
+                        </div>
+                        <h2 class="product-name">Jackal</h2>
+                        <p class="product-colourway">Panther Midnight</p>
+                        <p class="product-species">Indian Jackal</p>
+                        <p class="product-price">₹2,499</p>
+                        <div class="size-row" role="group" aria-label="Select size for Jackal">
+                            <button type="button" class="size-pill" data-size="S">S</button>
+                            <button type="button" class="size-pill is-selected" data-size="M">M</button>
+                            <button type="button" class="size-pill" data-size="L">L</button>
+                            <button type="button" class="size-pill" data-size="XL">XL</button>
+                            <button type="button" class="size-pill" data-size="XXL">XXL</button>
+                        </div>
+                        <button type="button" class="glass-button">Add to Cart</button>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+        <footer class="shop-footer">
+            Every order includes a gallery-grade Hahnemühle art print. Printed to order. No unsold inventory. 20% of profits to Indian wildlife conservation.
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            /* Product video autoplay */
+            document.querySelectorAll(".product-image-placeholder--video video").forEach(function (video) {
+                video.muted = true;
+                video.loop = false;
+                video.addEventListener("ended", function () {
+                    video.pause();
+                    if (video.duration && isFinite(video.duration)) {
+                        video.currentTime = Math.max(0, video.duration - 0.1);
+                    }
+                });
+                function tryPlay() {
+                    var playPromise = video.play();
+                    if (playPromise && playPromise.catch) {
+                        playPromise.catch(function () {});
+                    }
+                }
+                video.addEventListener("loadeddata", tryPlay);
+                tryPlay();
+            });
+
+            /* Size selector */
+            document.querySelectorAll(".size-row").forEach(function (row) {
+                row.querySelectorAll(".size-pill").forEach(function (pill) {
+                    pill.addEventListener("click", function () {
+                        row.querySelectorAll(".size-pill").forEach(function (p) {
+                            p.classList.remove("is-selected");
+                        });
+                        pill.classList.add("is-selected");
+                    });
+                });
+            });
+
+            /* Leaf canvas */
+            var canvas = document.getElementById("leafCanvas");
+            if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+            var ctx = canvas.getContext("2d");
+            var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            var leaves = [];
+            var LEAF_COUNT = 21;
+            var mouse = { x: 0, y: 0, active: false };
+            var lastMoveTime = performance.now();
+            var scrollY = 0;
+            var tilt = { x: 0, y: 0, active: false };
+            var isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+            var CURSOR_LERP = 0.06;
+            var REST_LERP = 0.03;
+            var IDLE_MS = 3000;
+            var INFLUENCE_RADIUS = 420;
+
+            var LEAF_PATHS = [
+                new Path2D("M 50 0 C 80 10 100 40 90 70 C 80 100 60 110 50 120 C 40 110 20 100 10 70 C 0 40 20 10 50 0 Z"),
+                new Path2D("M 45 0 C 75 5 95 35 88 65 C 82 95 58 115 45 130 C 32 115 8 95 2 65 C -4 35 15 5 45 0 Z"),
+                new Path2D("M 50 5 C 70 8 88 30 85 55 C 82 80 68 98 50 105 C 32 98 18 80 15 55 C 12 30 30 8 50 5 Z"),
+                new Path2D("M 55 0 C 90 15 105 45 92 72 C 78 102 62 108 48 118 C 28 108 12 88 8 58 C 4 28 25 8 55 0 Z")
+            ];
+
+            var LEAF_COLORS = [
+                { fill: "rgba(50, 60, 40, 0.35)", stroke: "rgba(50, 60, 40, 0.45)" },
+                { fill: "rgba(61, 79, 46, 0.25)", stroke: "rgba(61, 79, 46, 0.35)" },
+                { fill: "rgba(75, 54, 33, 0.20)", stroke: "rgba(75, 54, 33, 0.30)" }
+            ];
+
+            function rand(min, max) {
+                return min + Math.random() * (max - min);
+            }
+
+            function lerp(a, b, t) {
+                return a + (b - a) * t;
+            }
+
+            function resize() {
+                canvas.width = Math.floor(window.innerWidth * DPR);
+                canvas.height = Math.floor(window.innerHeight * DPR);
+                canvas.style.width = window.innerWidth + "px";
+                canvas.style.height = window.innerHeight + "px";
+                ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            }
+
+            function createLeaf() {
+                var isLarge = Math.random() > 0.45;
+                var width = isLarge ? rand(180, 280) : rand(80, 140);
+                var height = width * rand(1.1, 1.35);
+                return {
+                    restX: rand(0, window.innerWidth),
+                    restY: rand(0, window.innerHeight * 1.4),
+                    x: 0,
+                    y: 0,
+                    width: width,
+                    height: height,
+                    restRotation: rand(-30, 30) * Math.PI / 180,
+                    rotation: 0,
+                    pathIndex: Math.floor(Math.random() * LEAF_PATHS.length),
+                    color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
+                    breathPhase: Math.random() * Math.PI * 2,
+                    rotPhase: Math.random() * Math.PI * 2,
+                    rotDuration: rand(4000, 8000),
+                    parallax: isLarge ? rand(0.15, 0.28) : rand(0.45, 0.72)
+                };
+            }
+
+            function initLeaves() {
+                leaves.length = 0;
+                for (var i = 0; i < LEAF_COUNT; i += 1) {
+                    var leaf = createLeaf();
+                    leaf.x = leaf.restX;
+                    leaf.y = leaf.restY;
+                    leaf.rotation = leaf.restRotation;
+                    leaves.push(leaf);
+                }
+            }
+
+            function drawLeaf(leaf) {
+                var scaleX = leaf.width / 100;
+                var scaleY = leaf.height / 120;
+
+                ctx.save();
+                ctx.translate(leaf.x, leaf.y);
+                ctx.rotate(leaf.rotation);
+                ctx.scale(scaleX, scaleY);
+                ctx.translate(-50, -60);
+
+                ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+                ctx.shadowBlur = 14;
+                ctx.shadowOffsetX = 4;
+                ctx.shadowOffsetY = 8;
+
+                ctx.fillStyle = leaf.color.fill;
+                ctx.strokeStyle = leaf.color.stroke;
+                ctx.lineWidth = 1.2;
+                ctx.fill(LEAF_PATHS[leaf.pathIndex]);
+                ctx.stroke(LEAF_PATHS[leaf.pathIndex]);
+
+                ctx.restore();
+            }
+
+            function step(now) {
+                var idle = now - lastMoveTime > IDLE_MS;
+                scrollY = window.scrollY;
+
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+                for (var i = 0; i < leaves.length; i += 1) {
+                    var leaf = leaves[i];
+                    var breathX = Math.sin(now * 0.0008 + leaf.breathPhase) * 10;
+                    var breathY = Math.cos(now * 0.0006 + leaf.breathPhase) * 6;
+                    var scrollOffset = scrollY * leaf.parallax;
+                    var targetX = leaf.restX + breathX;
+                    var targetY = leaf.restY - scrollOffset + breathY;
+
+                    if (!isTouch && mouse.active && !idle) {
+                        var dx = mouse.x - leaf.x;
+                        var dy = mouse.y - leaf.y;
+                        var dist = Math.hypot(dx, dy) || 1;
+                        var influence = Math.max(0, 1 - dist / INFLUENCE_RADIUS);
+                        influence = influence * influence;
+                        targetX = leaf.restX + (mouse.x - leaf.restX) * influence * 0.55 + breathX * (1 - influence);
+                        targetY = leaf.restY - scrollOffset + (mouse.y - leaf.restY) * influence * 0.35 + breathY * (1 - influence);
+                        leaf.x = lerp(leaf.x, targetX, CURSOR_LERP);
+                        leaf.y = lerp(leaf.y, targetY, CURSOR_LERP);
+                    } else if (isTouch && tilt.active) {
+                        targetX = leaf.restX + tilt.x * 120 + breathX;
+                        targetY = leaf.restY - scrollOffset + tilt.y * 80 + breathY;
+                        leaf.x = lerp(leaf.x, targetX, CURSOR_LERP);
+                        leaf.y = lerp(leaf.y, targetY, CURSOR_LERP);
+                    } else {
+                        leaf.x = lerp(leaf.x, targetX, REST_LERP);
+                        leaf.y = lerp(leaf.y, targetY, REST_LERP);
+                    }
+
+                    var sway = Math.sin(now / leaf.rotDuration + leaf.rotPhase) * (2 * Math.PI / 180);
+                    leaf.rotation = leaf.restRotation + sway;
+
+                    drawLeaf(leaf);
+                }
+
+                requestAnimationFrame(step);
+            }
+
+            if (!isTouch) {
+                mouse.x = window.innerWidth * 0.5;
+                mouse.y = window.innerHeight * 0.5;
+
+                window.addEventListener("pointermove", function (e) {
+                    mouse.x = e.clientX;
+                    mouse.y = e.clientY;
+                    mouse.active = true;
+                    lastMoveTime = performance.now();
+                }, { passive: true });
+
+                window.addEventListener("pointerleave", function () {
+                    mouse.active = false;
+                });
+            } else if (window.DeviceOrientationEvent) {
+                window.addEventListener("deviceorientation", function (e) {
+                    if (e.gamma == null || e.beta == null) return;
+                    tilt.x = Math.max(-1, Math.min(1, e.gamma / 45));
+                    tilt.y = Math.max(-1, Math.min(1, (e.beta - 45) / 45));
+                    tilt.active = true;
+                }, { passive: true });
+            }
+
+            window.addEventListener("scroll", function () {
+                scrollY = window.scrollY;
+            }, { passive: true });
+
+            window.addEventListener("resize", function () {
+                resize();
+                initLeaves();
+            });
+
+            resize();
+            initLeaves();
+            requestAnimationFrame(step);
+        })();
+    </script>
+</body>
+</html>
