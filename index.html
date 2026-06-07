@@ -451,7 +451,7 @@
 
         .nav-link:hover {
             color: var(--text-heading);
-            text-decoration: underline;
+            text-decoration: none;
         }
 
         .nav-link:active {
@@ -731,6 +731,35 @@
             display: inline-flex;
         }
 
+        .typewriter-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 0.85em;
+            margin-left: 2px;
+            background: currentColor;
+            vertical-align: baseline;
+            animation: typewriter-blink 0.75s step-end infinite;
+        }
+
+        .typewriter-cursor.is-done {
+            animation: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        @keyframes typewriter-blink {
+            50% { opacity: 0; }
+        }
+
+        .hero-actions.is-typing-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hero-actions {
+            transition: opacity 0.5s ease;
+        }
+
         .hero-description {
             font-family: "DM Sans", sans-serif;
             font-size: clamp(0.875rem, 1.6vw, 1.0625rem);
@@ -752,10 +781,27 @@
         }
 
         /* 2. The Field Story */
-        .story .section-media img {
+        .story-photo {
+            display: block;
+            width: fit-content;
+            max-width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 16px;
+            overflow: hidden;
+            line-height: 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+        }
+
+        .story-photo img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
             max-height: min(78vh, 920px);
-            object-fit: contain;
+            object-fit: cover;
             object-position: center;
+            border-radius: 16px;
         }
 
         .story-text-container {
@@ -1274,10 +1320,27 @@
             .nav-links {
                 display: flex;
                 margin-left: auto;
+                gap: clamp(1.25rem, 2vw, 2rem);
             }
 
             .nav-menu {
                 display: none;
+            }
+
+            .nav-link {
+                min-height: auto;
+                padding: 0.25rem 0.4rem;
+                border-radius: 10px;
+                border: 1px solid transparent;
+                transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .nav-link:hover {
+                background: var(--glass-bg-hover);
+                backdrop-filter: blur(16px) saturate(180%);
+                -webkit-backdrop-filter: blur(16px) saturate(180%);
+                border-color: var(--glass-border-hover);
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             }
         }
 
@@ -1376,7 +1439,7 @@
                 min-height: min(65vw, 400px);
             }
 
-            .story .section-media img {
+            .story-photo img {
                 max-height: min(68vh, 640px);
             }
 
@@ -1491,6 +1554,19 @@
             }
         }
 
+        .fade-in {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform;
+        }
+
+        .fade-in.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         @media (prefers-reduced-motion: reduce) {
             html {
                 scroll-behavior: auto;
@@ -1498,6 +1574,11 @@
 
             .glass-button {
                 animation: none;
+            }
+
+            .fade-in {
+                opacity: 1;
+                transform: none;
             }
 
             *, *::before, *::after {
@@ -1559,12 +1640,12 @@
         <div class="hero-bg"></div>
         <div class="hero-content">
             <div class="hero-bottom">
-                <h1>WILD WILD</h1>
+                <h1 class="typewriter-line" data-typewriter="WILD WILD" aria-label="WILD WILD"></h1>
                 <div class="hero-meta">
-                    <div class="tagline">Defend The Habitat</div>
-                    <p class="hero-description">A sustainable, genderless brand born from India's forests — donating 20% of profits to Indian wildlife conservation</p>
+                    <div class="tagline typewriter-line" data-typewriter="Defend The Habitat" aria-label="Defend The Habitat"></div>
+                    <p class="hero-description typewriter-line" data-typewriter="A sustainable, genderless brand born from India's forests — donating 20% of profits to Indian wildlife conservation" aria-label="A sustainable, genderless brand born from India's forests — donating 20% of profits to Indian wildlife conservation"></p>
                 </div>
-                <div class="hero-actions">
+                <div class="hero-actions is-typing-hidden">
                     <a href="./shop.html" class="glass-button" id="shopWildBtn">Shop The Wild</a>
                 </div>
             </div>
@@ -1580,10 +1661,10 @@
                 <p>There was simply no apparel made for the people who genuinely love these places — nothing that let them wear the wild they had come to witness.</p>
                 <p>Wild Wild was built on a single belief: every Indian species has a story worth wearing.</p>
             </div>
-            <figure class="section-media">
+            <figure class="section-media story-photo">
                 <img
                     src="./assets/field-photography-leopard.png"
-                    alt="Leopard walking through wild grassland — original field photography"
+                    alt="Leopard walking through Rajaji National Park — original field photography"
                     loading="lazy"
                     width="1024"
                     height="682"
@@ -1760,6 +1841,106 @@
 
     <script>
         (function () {
+            var typewriterLines = document.querySelectorAll(".hero .typewriter-line");
+            var heroActions = document.querySelector(".hero-actions");
+
+            function runTypewriter(el, speed) {
+                return new Promise(function (resolve) {
+                    var text = el.getAttribute("data-typewriter") || "";
+                    el.textContent = "";
+
+                    var textSpan = document.createElement("span");
+                    textSpan.className = "typewriter-text";
+                    var cursor = document.createElement("span");
+                    cursor.className = "typewriter-cursor";
+                    cursor.setAttribute("aria-hidden", "true");
+
+                    el.appendChild(textSpan);
+                    el.appendChild(cursor);
+
+                    var index = 0;
+                    function step() {
+                        if (index < text.length) {
+                            textSpan.textContent += text.charAt(index);
+                            index += 1;
+                            setTimeout(step, speed);
+                            return;
+                        }
+                        cursor.classList.add("is-done");
+                        setTimeout(function () {
+                            cursor.remove();
+                            resolve();
+                        }, 600);
+                    }
+                    step();
+                });
+            }
+
+            function initHeroTypewriter() {
+                if (!typewriterLines.length) return;
+
+                if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                    typewriterLines.forEach(function (el) {
+                        el.textContent = el.getAttribute("data-typewriter") || "";
+                    });
+                    if (heroActions) heroActions.classList.remove("is-typing-hidden");
+                    return;
+                }
+
+                var speeds = [65, 52, 24];
+                var pauses = [480, 360, 0];
+
+                (function chain(idx) {
+                    if (idx >= typewriterLines.length) {
+                        if (heroActions) heroActions.classList.remove("is-typing-hidden");
+                        return;
+                    }
+                    runTypewriter(typewriterLines[idx], speeds[idx] || 30).then(function () {
+                        setTimeout(function () {
+                            chain(idx + 1);
+                        }, pauses[idx] || 0);
+                    });
+                })(0);
+            }
+
+            initHeroTypewriter();
+
+            function initSectionFadeIn() {
+                var fadeTargets = document.querySelectorAll(
+                    "#story, #philosophy .zones-ideology-intro, #philosophy .zone-block, #philosophy .zones-ideology-closing, .divider, #sustainability, #conservation, .unboxing, .closing-cta-content"
+                );
+
+                if (!fadeTargets.length) return;
+
+                if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                    fadeTargets.forEach(function (el) {
+                        el.classList.add("fade-in", "is-visible");
+                    });
+                    return;
+                }
+
+                fadeTargets.forEach(function (el) {
+                    el.classList.add("fade-in");
+                });
+
+                var observer = new IntersectionObserver(
+                    function (entries) {
+                        entries.forEach(function (entry) {
+                            if (!entry.isIntersecting) return;
+                            entry.target.classList.add("is-visible");
+                            observer.unobserve(entry.target);
+                        });
+                    },
+                    { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+                );
+
+                fadeTargets.forEach(function (el) {
+                    observer.observe(el);
+                });
+            }
+
+            initSectionFadeIn();
+
             var shopBtn = document.getElementById("shopWildBtn");
             if (shopBtn) {
                 shopBtn.addEventListener("click", function () {

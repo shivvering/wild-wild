@@ -74,13 +74,21 @@
             z-index: 0;
         }
 
-        #leafCanvas {
+        .ww-leaves-scene {
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
             pointer-events: none;
+            overflow: hidden;
+        }
+
+        #leavesCanvas {
+            width: 100%;
+            height: 100%;
+            opacity: 0.92;
         }
 
         .shop-page {
@@ -88,6 +96,11 @@
             z-index: 1;
             min-height: 100vh;
             padding: calc(0.5rem + var(--safe-top)) var(--page-pad) calc(3rem + var(--safe-bottom));
+        }
+
+        .shop-page > :not(.ww-leaves-scene) {
+            position: relative;
+            z-index: 1;
         }
 
         .back-link {
@@ -395,17 +408,13 @@
             }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-            #leafCanvas {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
-    <canvas id="leafCanvas" aria-hidden="true"></canvas>
-
     <div class="shop-page">
+        <div class="ww-leaves-scene" aria-hidden="true">
+            <canvas id="leavesCanvas"></canvas>
+        </div>
         <a href="./index.html" class="back-link" aria-label="Back to Wild Wild home">
             <img src="./Logo/Wild%20Wild%20Logo%20Transparent%20Background.png" alt="Wild Wild" width="4861" height="6250" />
         </a>
@@ -475,7 +484,7 @@
 
                     <article class="product-card" data-product="sarus">
                         <div class="product-image-placeholder product-image-placeholder--video">
-                            <video autoplay muted playsinline loop="false" preload="auto" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Sarus Crane product video">
+                            <video autoplay muted playsinline loop="false" preload="metadata" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Sarus Crane product video">
                                 <source src="./Videos/Sarus &amp; Water_Vertical.mp4" type="video/mp4">
                                 <source src="./Videos/Sarus &amp; Water_Vertical.mov" type="video/quicktime">
                             </video>
@@ -501,7 +510,7 @@
 
                     <article class="product-card" data-product="jackal">
                         <div class="product-image-placeholder product-image-placeholder--video">
-                            <video autoplay muted playsinline loop="false" preload="auto" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Indian Jackal product video">
+                            <video autoplay muted playsinline loop="false" preload="metadata" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Indian Jackal product video">
                                 <source src="./Videos/Indian Jackal Blender Video.mp4" type="video/mp4">
                                 <source src="./Videos/Indian Jackal Blender Video.mov" type="video/quicktime">
                             </video>
@@ -562,188 +571,618 @@
                 });
             });
 
-            /* Leaf canvas */
-            var canvas = document.getElementById("leafCanvas");
-            if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+            /* Leaves canvas — cinematic slow-motion forest leaves */
+            var canvas = document.getElementById("leavesCanvas");
+            if (!canvas) return;
+
+            if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
             var ctx = canvas.getContext("2d");
-            var DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
             var leaves = [];
-            var LEAF_COUNT = 21;
-            var mouse = { x: 0, y: 0, active: false };
-            var lastMoveTime = performance.now();
-            var scrollY = 0;
-            var tilt = { x: 0, y: 0, active: false };
-            var isTouch = window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
-            var CURSOR_LERP = 0.06;
-            var REST_LERP = 0.03;
-            var IDLE_MS = 3000;
-            var INFLUENCE_RADIUS = 420;
+            var windCycle = 0;
+            var globalWind = 0;
+            var MAX_LEAVES = 0;
+            var hasOpened = false;
+            var animating = true;
 
-            var LEAF_PATHS = [
-                new Path2D("M 50 0 C 80 10 100 40 90 70 C 80 100 60 110 50 120 C 40 110 20 100 10 70 C 0 40 20 10 50 0 Z"),
-                new Path2D("M 45 0 C 75 5 95 35 88 65 C 82 95 58 115 45 130 C 32 115 8 95 2 65 C -4 35 15 5 45 0 Z"),
-                new Path2D("M 50 5 C 70 8 88 30 85 55 C 82 80 68 98 50 105 C 32 98 18 80 15 55 C 12 30 30 8 50 5 Z"),
-                new Path2D("M 55 0 C 90 15 105 45 92 72 C 78 102 62 108 48 118 C 28 108 12 88 8 58 C 4 28 25 8 55 0 Z")
-            ];
+            var timeScale = 1.0;
+            var SLOW_MOTION_TARGET = 0.18;
+            var SLOW_MOTION_LEAD_MS = 500;
+            var PRE_SLOW_DURATION = 1200;
+            var PRE_SLOW_TARGET = 0.48;
+            var TRANSITION_DURATION = 3600;
+            var LEAF_SIZE = 54;
+            var slowMotionTriggerY = 0;
+            var slowMotionTriggered = false;
+            var transitionStart = null;
+            var transitionComplete = false;
+            var lastTimestamp = null;
 
-            var LEAF_COLORS = [
-                { fill: "rgba(50, 60, 40, 0.35)", stroke: "rgba(50, 60, 40, 0.45)" },
-                { fill: "rgba(61, 79, 46, 0.25)", stroke: "rgba(61, 79, 46, 0.35)" },
-                { fill: "rgba(75, 54, 33, 0.20)", stroke: "rgba(75, 54, 33, 0.30)" }
-            ];
+            var mouse = {
+                x: window.innerWidth / 2,
+                y: window.innerHeight / 2,
+                vx: 0,
+                vy: 0,
+                prevX: window.innerWidth / 2,
+                prevY: window.innerHeight / 2,
+                speed: 0,
+                active: false
+            };
 
-            function rand(min, max) {
+            function random(min, max) {
                 return min + Math.random() * (max - min);
             }
 
-            function lerp(a, b, t) {
-                return a + (b - a) * t;
+            function easeOutQuad(t) {
+                return 1 - (1 - t) * (1 - t);
             }
 
-            function resize() {
+            function easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+
+            function updateSlowMotionTriggerY() {
+                var el = document.querySelector(".shop-header .subheading");
+                if (!el) {
+                    slowMotionTriggerY = window.innerHeight * 0.22;
+                    return;
+                }
+                slowMotionTriggerY = el.getBoundingClientRect().top;
+            }
+
+            function getActiveLeavesAverageY() {
+                var sum = 0;
+                var count = 0;
+                for (var i = 0; i < leaves.length; i += 1) {
+                    if (leaves[i].active) {
+                        sum += leaves[i].y;
+                        count += 1;
+                    }
+                }
+                return count ? sum / count : 0;
+            }
+
+            function getActiveLeavesAverageVy() {
+                var sum = 0;
+                var count = 0;
+                for (var i = 0; i < leaves.length; i += 1) {
+                    if (leaves[i].active) {
+                        sum += leaves[i].vy * (0.55 + leaves[i].depth * 0.45);
+                        count += 1;
+                    }
+                }
+                return count ? sum / count : 6.5;
+            }
+
+            function updateTimeScale(timestamp) {
+                if (transitionComplete) return;
+
+                if (!slowMotionTriggered) {
+                    updateSlowMotionTriggerY();
+                    var leadPx = getActiveLeavesAverageVy() * (SLOW_MOTION_LEAD_MS / 16.67);
+                    if (getActiveLeavesAverageY() < slowMotionTriggerY - leadPx) {
+                        timeScale = 1.0;
+                        return;
+                    }
+                    slowMotionTriggered = true;
+                    transitionStart = timestamp;
+                }
+
+                var elapsed = timestamp - transitionStart;
+
+                if (elapsed < PRE_SLOW_DURATION) {
+                    var preProgress = elapsed / PRE_SLOW_DURATION;
+                    var preEased = easeOutQuad(preProgress);
+                    timeScale = 1.0 - preEased * (1.0 - PRE_SLOW_TARGET);
+                    return;
+                }
+
+                var transitionElapsed = elapsed - PRE_SLOW_DURATION;
+                var progress = Math.min(transitionElapsed / TRANSITION_DURATION, 1);
+                var eased = easeOutCubic(progress);
+
+                timeScale = PRE_SLOW_TARGET - eased * (PRE_SLOW_TARGET - SLOW_MOTION_TARGET);
+
+                if (progress >= 1) {
+                    timeScale = SLOW_MOTION_TARGET;
+                    transitionComplete = true;
+                }
+            }
+
+            function getLeafCount() {
+                if (window.innerWidth < 480) return 32;
+                if (window.innerWidth < 768) return 42;
+                if (window.innerWidth < 1024) return 54;
+                return 68;
+            }
+
+            function hasActiveLeaves() {
+                for (var i = 0; i < leaves.length; i += 1) {
+                    if (leaves[i].active) return true;
+                }
+                return false;
+            }
+
+            var CANONICAL_PALETTE = {
+                light: [178, 202, 108],
+                mid: [118, 148, 68],
+                dark: [68, 92, 44],
+                edge: [108, 88, 52]
+            };
+
+            var CANONICAL_COLOR = "rgba(148, 175, 88, 1)";
+
+            var CANONICAL_EDGE_VARIATION = [
+                0.97, 1.02, 0.99, 1.01, 1.0, 0.98, 1.03, 0.97, 1.01, 0.99,
+                1.02, 0.98, 1.0, 1.01, 0.97, 1.02
+            ];
+
+            var CANONICAL_VEIN_NETWORK = [
+                { t: 0.14, side: 1, length: 0.34, angle: 54, curve: 0.11, branches: [
+                    { at: 0.55, len: 0.12, spread: 0.32 }, { at: 0.68, len: 0.08, spread: -0.28 }
+                ]},
+                { t: 0.26, side: -1, length: 0.36, angle: 50, curve: 0.09, branches: [
+                    { at: 0.52, len: 0.11, spread: -0.35 }, { at: 0.72, len: 0.09, spread: 0.24 }
+                ]},
+                { t: 0.38, side: 1, length: 0.33, angle: 56, curve: 0.10, branches: [
+                    { at: 0.58, len: 0.10, spread: 0.30 }, { at: 0.74, len: 0.07, spread: -0.22 }
+                ]},
+                { t: 0.50, side: -1, length: 0.30, angle: 52, curve: 0.08, branches: [
+                    { at: 0.50, len: 0.09, spread: -0.30 }, { at: 0.65, len: 0.08, spread: 0.26 }
+                ]},
+                { t: 0.62, side: 1, length: 0.27, angle: 48, curve: 0.07, branches: [
+                    { at: 0.56, len: 0.08, spread: 0.28 }, { at: 0.70, len: 0.06, spread: -0.20 }
+                ]},
+                { t: 0.74, side: -1, length: 0.24, angle: 55, curve: 0.06, branches: [
+                    { at: 0.54, len: 0.07, spread: -0.26 }, { at: 0.66, len: 0.06, spread: 0.22 }
+                ]},
+                { t: 0.84, side: 1, length: 0.20, angle: 51, curve: 0.05, branches: [
+                    { at: 0.60, len: 0.06, spread: 0.24 }, { at: 0.72, len: 0.05, spread: -0.18 }
+                ]}
+            ];
+
+            var CANONICAL_TEXTURE_LINES = [
+                { sx: -0.12, sy: -0.18, cpx: -0.04, cpy: -0.06, ex: 0.08, ey: 0.10 },
+                { sx: 0.10, sy: -0.08, cpx: 0.05, cpy: 0.02, ex: -0.06, ey: 0.14 },
+                { sx: -0.06, sy: 0.06, cpx: 0.02, cpy: 0.10, ex: 0.10, ey: 0.16 },
+                { sx: 0.04, sy: -0.22, cpx: 0.08, cpy: -0.10, ex: -0.10, ey: 0.04 }
+            ];
+
+            function colorWithOpacity(rgba, newOp) {
+                return rgba.replace(/,\s*1\)/, ", " + newOp + ")");
+            }
+
+            function createLeaf() {
+                return {
+                    x: random(0, canvas.width),
+                    y: random(-canvas.height * 1.2, -10),
+                    vx: random(-0.06, 0.06),
+                    vy: random(0.14, 0.42),
+                    rotation: random(0, 360),
+                    rotationSpeed: random(-0.18, 0.18),
+                    wobble: random(0, Math.PI * 2),
+                    wobbleSpeed: random(0.003, 0.008),
+                    wobbleAmplitude: random(0.06, 0.18),
+                    size: LEAF_SIZE,
+                    opacity: 0.86,
+                    shape: 0,
+                    color: CANONICAL_COLOR,
+                    palette: CANONICAL_PALETTE,
+                    depth: random(0.75, 1.0),
+                    flip: Math.random() > 0.5 ? 1 : -1,
+                    tiltPhase: random(0, Math.PI * 2),
+                    tiltSpeed: random(0.004, 0.011),
+                    curl: 0.06,
+                    edgeRoughness: 0.84,
+                    veinCount: CANONICAL_VEIN_NETWORK.length,
+                    veinNetwork: CANONICAL_VEIN_NETWORK,
+                    midribCurve: 0.02,
+                    surfaceLightOffset: { x: -0.08, y: -0.15 },
+                    edgeVariation: CANONICAL_EDGE_VARIATION,
+                    textureLines: CANONICAL_TEXTURE_LINES,
+                    disturbed: false,
+                    disturbVx: 0,
+                    disturbVy: 0,
+                    disturbRotationSpeed: 0,
+                    recovery: 0,
+                    recoveryRate: random(0.007, 0.016),
+                    active: true
+                };
+            }
+
+            function traceLeafBody(ctx2d, leaf, s) {
+                var ev = leaf.edgeVariation;
+                var er = leaf.edgeRoughness;
+
+                if (leaf.shape === 0) {
+                    ctx2d.moveTo(0, -s * 0.55);
+                    ctx2d.bezierCurveTo(
+                        s * 0.52 * ev[0] * er, -s * 0.38 * ev[1],
+                        s * 0.50 * ev[2], s * 0.20 * ev[3],
+                        s * 0.04, s * 0.55
+                    );
+                    ctx2d.bezierCurveTo(
+                        s * 0.02, s * 0.68 * ev[4],
+                        -s * 0.02, s * 0.68 * ev[5],
+                        -s * 0.04, s * 0.55
+                    );
+                    ctx2d.bezierCurveTo(
+                        -s * 0.48 * ev[6], s * 0.22 * ev[7],
+                        -s * 0.50 * ev[8], -s * 0.40 * ev[9],
+                        0, -s * 0.55
+                    );
+                } else if (leaf.shape === 1) {
+                    ctx2d.moveTo(s * 0.02, -s * 0.60);
+                    ctx2d.bezierCurveTo(
+                        s * 0.44 * ev[0] * er, -s * 0.50 * ev[1],
+                        s * 0.46 * ev[2], s * 0.40 * ev[3],
+                        s * 0.02, s * 0.62
+                    );
+                    ctx2d.bezierCurveTo(
+                        -s * 0.42 * ev[4], s * 0.42 * ev[5],
+                        -s * 0.44 * ev[6], -s * 0.52 * ev[7],
+                        s * 0.02, -s * 0.60
+                    );
+                } else if (leaf.shape === 2) {
+                    ctx2d.moveTo(0, -s * 0.48);
+                    ctx2d.bezierCurveTo(
+                        s * 0.60 * ev[0] * er, -s * 0.46 * ev[1],
+                        s * 0.70 * ev[2], s * 0.18 * ev[3],
+                        s * 0.10, s * 0.56
+                    );
+                    ctx2d.bezierCurveTo(
+                        s * 0.04, s * 0.64 * ev[4],
+                        -s * 0.04, s * 0.64 * ev[5],
+                        -s * 0.10, s * 0.56
+                    );
+                    ctx2d.bezierCurveTo(
+                        -s * 0.68 * ev[6], s * 0.20 * ev[7],
+                        -s * 0.58 * ev[8], -s * 0.47 * ev[9],
+                        0, -s * 0.48
+                    );
+                } else {
+                    ctx2d.moveTo(0, -s * 0.50);
+                    ctx2d.bezierCurveTo(
+                        s * 0.18 * ev[0], -s * 0.58 * ev[1],
+                        s * 0.50 * ev[2], -s * 0.30 * ev[3],
+                        s * 0.52 * ev[4], s * 0.08
+                    );
+                    ctx2d.bezierCurveTo(
+                        s * 0.48 * ev[5], s * 0.42 * ev[6],
+                        s * 0.16, s * 0.60,
+                        0, s * 0.62
+                    );
+                    ctx2d.bezierCurveTo(
+                        -s * 0.16, s * 0.60,
+                        -s * 0.48 * ev[7], s * 0.44 * ev[8],
+                        -s * 0.52 * ev[9], s * 0.08
+                    );
+                    ctx2d.bezierCurveTo(
+                        -s * 0.50 * ev[10], -s * 0.30 * ev[11],
+                        -s * 0.18, -s * 0.58,
+                        0, -s * 0.50
+                    );
+                }
+            }
+
+            function veinColor(palette, opacity, strength) {
+                var d = palette.dark;
+                var mix = strength || 1;
+                return "rgba(" + d[0] + "," + d[1] + "," + d[2] + "," + opacity + ")";
+            }
+
+            function drawRealisticVeins(ctx2d, leaf, s, op) {
+                var p = leaf.palette;
+                var slo = leaf.surfaceLightOffset;
+                var midX = s * 0.03;
+                var curve = leaf.midribCurve || 0;
+
+                ctx2d.lineCap = "round";
+                ctx2d.lineJoin = "round";
+
+                ctx2d.beginPath();
+                ctx2d.moveTo(midX + s * slo.x * 0.15, -s * 0.54);
+                ctx2d.quadraticCurveTo(
+                    midX + s * curve, 0,
+                    midX + s * 0.02, s * 0.60
+                );
+                ctx2d.strokeStyle = veinColor(p, op * 0.52, 1);
+                ctx2d.lineWidth = Math.max(1.1, s * 0.028);
+                ctx2d.stroke();
+
+                ctx2d.beginPath();
+                ctx2d.moveTo(midX + s * slo.x * 0.15, -s * 0.54);
+                ctx2d.quadraticCurveTo(
+                    midX + s * curve, 0,
+                    midX + s * 0.02, s * 0.60
+                );
+                ctx2d.strokeStyle = veinColor(p, op * 0.22, 0.8);
+                ctx2d.lineWidth = Math.max(0.35, s * 0.008);
+                ctx2d.stroke();
+
+                var network = leaf.veinNetwork || [];
+                for (var i = 0; i < network.length; i += 1) {
+                    var vn = network[i];
+                    var startY = -s * 0.46 + vn.t * s * 1.02;
+                    var angleRad = (vn.angle * Math.PI) / 180;
+                    var veinLen = s * vn.length * (1 - vn.t * 0.28);
+                    var endX = midX + vn.side * Math.cos(angleRad) * veinLen;
+                    var endY = startY + Math.sin(angleRad) * veinLen * 0.35;
+                    var cpX = midX + vn.side * veinLen * 0.48;
+                    var cpY = startY + s * vn.curve;
+
+                    ctx2d.beginPath();
+                    ctx2d.moveTo(midX, startY);
+                    ctx2d.quadraticCurveTo(cpX, cpY, endX, endY);
+                    ctx2d.strokeStyle = veinColor(p, op * 0.34, 1);
+                    ctx2d.lineWidth = Math.max(0.55, s * 0.014);
+                    ctx2d.stroke();
+
+                    for (var b = 0; b < vn.branches.length; b += 1) {
+                        var br = vn.branches[b];
+                        var bx = midX + (endX - midX) * br.at;
+                        var by = startY + (endY - startY) * br.at;
+                        var bLen = s * br.len;
+                        var bEndX = bx + vn.side * Math.cos(angleRad + br.spread) * bLen;
+                        var bEndY = by + Math.sin(angleRad + br.spread) * bLen * 0.5;
+
+                        ctx2d.beginPath();
+                        ctx2d.moveTo(bx, by);
+                        ctx2d.lineTo(bEndX, bEndY);
+                        ctx2d.strokeStyle = veinColor(p, op * 0.18, 1);
+                        ctx2d.lineWidth = Math.max(0.3, s * 0.007);
+                        ctx2d.stroke();
+                    }
+                }
+
+                for (var f = 0; f < 3; f += 1) {
+                    var ft = 0.55 + f * 0.12;
+                    var fy = -s * 0.2 + ft * s * 0.75;
+                    ctx2d.beginPath();
+                    ctx2d.moveTo(midX - s * 0.08, fy);
+                    ctx2d.quadraticCurveTo(midX, fy + s * 0.02, midX + s * 0.08, fy);
+                    ctx2d.strokeStyle = veinColor(p, op * 0.08, 1);
+                    ctx2d.lineWidth = 0.25;
+                    ctx2d.stroke();
+                }
+            }
+
+            function drawLeafShape(ctx2d, leaf, apparentSize, apparentOpacity) {
+                var s = apparentSize;
+                var op = apparentOpacity;
+                var slo = leaf.surfaceLightOffset;
+                var p = leaf.palette;
+
+                ctx2d.save();
+                ctx2d.beginPath();
+                traceLeafBody(ctx2d, leaf, s);
+                ctx2d.closePath();
+
+                var gradient = ctx2d.createRadialGradient(
+                    s * slo.x, s * slo.y, 0,
+                    0, 0, s * 0.92
+                );
+                gradient.addColorStop(0, "rgba(" + p.light.join(",") + "," + (op * 0.98) + ")");
+                gradient.addColorStop(0.35, colorWithOpacity(leaf.color, op * 0.94));
+                gradient.addColorStop(0.72, "rgba(" + p.mid.join(",") + "," + (op * 0.82) + ")");
+                gradient.addColorStop(1, "rgba(" + p.dark.join(",") + "," + (op * 0.68) + ")");
+
+                ctx2d.fillStyle = gradient;
+                ctx2d.fill();
+
+                ctx2d.strokeStyle = "rgba(" + p.edge.join(",") + "," + (op * 0.42) + ")";
+                ctx2d.lineWidth = 0.7;
+                ctx2d.stroke();
+
+                drawRealisticVeins(ctx2d, leaf, s, op);
+
+                ctx2d.beginPath();
+                ctx2d.moveTo(s * 0.02, s * 0.58);
+                ctx2d.quadraticCurveTo(s * 0.02, s * 0.74, s * 0.01, s * 0.84);
+                ctx2d.strokeStyle = "rgba(" + p.edge.join(",") + "," + (op * 0.55) + ")";
+                ctx2d.lineWidth = Math.max(0.8, s * 0.018);
+                ctx2d.lineCap = "round";
+                ctx2d.stroke();
+
+                for (var tl = 0; tl < leaf.textureLines.length; tl += 1) {
+                    var line = leaf.textureLines[tl];
+                    ctx2d.beginPath();
+                    ctx2d.moveTo(s * line.sx, s * line.sy);
+                    ctx2d.quadraticCurveTo(
+                        s * line.cpx, s * line.cpy,
+                        s * line.ex, s * line.ey
+                    );
+                    ctx2d.strokeStyle = veinColor(p, op * 0.07, 1);
+                    ctx2d.lineWidth = 0.3;
+                    ctx2d.stroke();
+                }
+
+                ctx2d.save();
+                ctx2d.clip();
+                var rimGradient = ctx2d.createRadialGradient(0, 0, s * 0.25, 0, 0, s * 0.9);
+                rimGradient.addColorStop(0.7, "rgba(0,0,0,0)");
+                rimGradient.addColorStop(1, "rgba(" + p.edge.join(",") + "," + (op * 0.18) + ")");
+                ctx2d.fillStyle = rimGradient;
+                ctx2d.fillRect(-s, -s, s * 2, s * 2);
+                ctx2d.restore();
+
+                ctx2d.restore();
+            }
+
+            function bakeLeafSprite(leaf) {
+                var s = leaf.size;
+                var pad = Math.ceil(s * 0.35);
+                var w = Math.ceil(s * 2 + pad * 2);
+                var h = Math.ceil(s * 2.4 + pad * 2);
+                var off = document.createElement("canvas");
+                off.width = w;
+                off.height = h;
+                var octx = off.getContext("2d");
+                octx.translate(w / 2, h / 2);
+                drawLeafShape(octx, leaf, s, 1);
+                leaf.sprite = off;
+                leaf.spriteW = w;
+                leaf.spriteH = h;
+            }
+
+            function applyCursorForce(leaf) {
+                if (!mouse.active) return;
+
+                var dx = leaf.x - mouse.x;
+                var dy = leaf.y - mouse.y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var INFLUENCE = 110;
+
+                if (dist < INFLUENCE && dist > 0) {
+                    var force = (1 - dist / INFLUENCE) * 0.18;
+                    var angle = Math.atan2(dy, dx);
+                    leaf.disturbVx += Math.cos(angle) * force;
+                    leaf.disturbVy += Math.sin(angle) * force;
+                    leaf.disturbRotationSpeed = leaf.flip * force * 2.2;
+                    leaf.disturbed = true;
+                    leaf.recovery = 0;
+                }
+            }
+
+            function updateLeaf(leaf, frameScale) {
+                if (!leaf.active) return;
+
+                leaf.wobble += leaf.wobbleSpeed * frameScale;
+                leaf.tiltPhase += leaf.tiltSpeed * frameScale;
+                var sway = Math.sin(leaf.wobble) * leaf.wobbleAmplitude;
+                var drift = Math.cos(leaf.wobble * 0.7) * leaf.wobbleAmplitude * 0.35;
+
+                applyCursorForce(leaf);
+
+                if (leaf.disturbed) {
+                    leaf.recovery += leaf.recoveryRate * frameScale;
+                    leaf.disturbVx *= (1 - 0.04 * frameScale);
+                    leaf.disturbVy *= (1 - 0.04 * frameScale);
+                    leaf.disturbRotationSpeed *= (1 - 0.05 * frameScale);
+                    if (leaf.recovery >= 1) {
+                        leaf.disturbed = false;
+                        leaf.disturbVx = 0;
+                        leaf.disturbVy = 0;
+                        leaf.disturbRotationSpeed = 0;
+                    }
+                }
+
+                leaf.x += (leaf.vx + sway + drift + leaf.disturbVx + globalWind) * frameScale;
+                leaf.y += (leaf.vy * (0.55 + leaf.depth * 0.45) + leaf.disturbVy) * frameScale;
+                leaf.rotation += (leaf.rotationSpeed + leaf.disturbRotationSpeed) * frameScale;
+
+                if (leaf.y > canvas.height * 0.88) {
+                    leaf.opacity -= 0.0015 * frameScale;
+                }
+
+                if (leaf.y > canvas.height + 60 || leaf.opacity <= 0.02) {
+                    leaf.active = false;
+                }
+            }
+
+            function drawLeaf(leaf) {
+                if (!leaf.active || !leaf.sprite) return;
+                ctx.save();
+                ctx.translate(leaf.x, leaf.y);
+                ctx.rotate((leaf.rotation * Math.PI) / 180);
+
+                var tilt = 0.72 + Math.sin(leaf.tiltPhase) * 0.28;
+                ctx.scale(leaf.flip * tilt, 1);
+                ctx.globalAlpha = leaf.opacity * (0.38 + leaf.depth * 0.62);
+                ctx.drawImage(leaf.sprite, -leaf.spriteW / 2, -leaf.spriteH / 2);
+                ctx.restore();
+            }
+
+            function initLeaves() {
+                leaves.length = 0;
+                MAX_LEAVES = getLeafCount();
+                for (var i = 0; i < MAX_LEAVES; i += 1) {
+                    var leaf = createLeaf();
+                    leaf.y = random(-220, canvas.height * 0.03);
+                    leaf.x = random(-40, canvas.width + 40);
+                    leaf.vy = random(4.5, 8.5);
+                    leaf.vx = random(-1.0, 1.0);
+                    leaf.rotationSpeed = random(-2.8, 2.8);
+                    bakeLeafSprite(leaf);
+                    leaves.push(leaf);
+                }
+                leaves.sort(function (a, b) { return a.depth - b.depth; });
+            }
+
+            function resizeCanvas() {
+                DPR = Math.min(window.devicePixelRatio || 1, 1.5);
                 canvas.width = Math.floor(window.innerWidth * DPR);
                 canvas.height = Math.floor(window.innerHeight * DPR);
                 canvas.style.width = window.innerWidth + "px";
                 canvas.style.height = window.innerHeight + "px";
                 ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-            }
+                mouse.x = Math.min(mouse.x, canvas.width / DPR);
+                mouse.y = Math.min(mouse.y, canvas.height / DPR);
+                updateSlowMotionTriggerY();
 
-            function createLeaf() {
-                var isLarge = Math.random() > 0.45;
-                var width = isLarge ? rand(180, 280) : rand(80, 140);
-                var height = width * rand(1.1, 1.35);
-                return {
-                    restX: rand(0, window.innerWidth),
-                    restY: rand(0, window.innerHeight * 1.4),
-                    x: 0,
-                    y: 0,
-                    width: width,
-                    height: height,
-                    restRotation: rand(-30, 30) * Math.PI / 180,
-                    rotation: 0,
-                    pathIndex: Math.floor(Math.random() * LEAF_PATHS.length),
-                    color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
-                    breathPhase: Math.random() * Math.PI * 2,
-                    rotPhase: Math.random() * Math.PI * 2,
-                    rotDuration: rand(4000, 8000),
-                    parallax: isLarge ? rand(0.15, 0.28) : rand(0.45, 0.72)
-                };
-            }
-
-            function initLeaves() {
-                leaves.length = 0;
-                for (var i = 0; i < LEAF_COUNT; i += 1) {
-                    var leaf = createLeaf();
-                    leaf.x = leaf.restX;
-                    leaf.y = leaf.restY;
-                    leaf.rotation = leaf.restRotation;
-                    leaves.push(leaf);
+                if (leaves.length === 0) {
+                    initLeaves();
+                    hasOpened = true;
                 }
             }
 
-            function drawLeaf(leaf) {
-                var scaleX = leaf.width / 100;
-                var scaleY = leaf.height / 120;
+            function animate(timestamp) {
+                if (!animating) return;
 
-                ctx.save();
-                ctx.translate(leaf.x, leaf.y);
-                ctx.rotate(leaf.rotation);
-                ctx.scale(scaleX, scaleY);
-                ctx.translate(-50, -60);
+                if (!lastTimestamp) lastTimestamp = timestamp;
+                var deltaMs = Math.min(timestamp - lastTimestamp, 32);
+                lastTimestamp = timestamp;
 
-                ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-                ctx.shadowBlur = 14;
-                ctx.shadowOffsetX = 4;
-                ctx.shadowOffsetY = 8;
-
-                ctx.fillStyle = leaf.color.fill;
-                ctx.strokeStyle = leaf.color.stroke;
-                ctx.lineWidth = 1.2;
-                ctx.fill(LEAF_PATHS[leaf.pathIndex]);
-                ctx.stroke(LEAF_PATHS[leaf.pathIndex]);
-
-                ctx.restore();
-            }
-
-            function step(now) {
-                var idle = now - lastMoveTime > IDLE_MS;
-                scrollY = window.scrollY;
+                updateTimeScale(timestamp);
+                var frameScale = (deltaMs / 16.67) * timeScale;
 
                 ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
+                windCycle += 0.0018 * frameScale;
+                globalWind = Math.sin(windCycle) * 0.06 + Math.sin(windCycle * 0.37) * 0.025;
+
                 for (var i = 0; i < leaves.length; i += 1) {
-                    var leaf = leaves[i];
-                    var breathX = Math.sin(now * 0.0008 + leaf.breathPhase) * 10;
-                    var breathY = Math.cos(now * 0.0006 + leaf.breathPhase) * 6;
-                    var scrollOffset = scrollY * leaf.parallax;
-                    var targetX = leaf.restX + breathX;
-                    var targetY = leaf.restY - scrollOffset + breathY;
-
-                    if (!isTouch && mouse.active && !idle) {
-                        var dx = mouse.x - leaf.x;
-                        var dy = mouse.y - leaf.y;
-                        var dist = Math.hypot(dx, dy) || 1;
-                        var influence = Math.max(0, 1 - dist / INFLUENCE_RADIUS);
-                        influence = influence * influence;
-                        targetX = leaf.restX + (mouse.x - leaf.restX) * influence * 0.55 + breathX * (1 - influence);
-                        targetY = leaf.restY - scrollOffset + (mouse.y - leaf.restY) * influence * 0.35 + breathY * (1 - influence);
-                        leaf.x = lerp(leaf.x, targetX, CURSOR_LERP);
-                        leaf.y = lerp(leaf.y, targetY, CURSOR_LERP);
-                    } else if (isTouch && tilt.active) {
-                        targetX = leaf.restX + tilt.x * 120 + breathX;
-                        targetY = leaf.restY - scrollOffset + tilt.y * 80 + breathY;
-                        leaf.x = lerp(leaf.x, targetX, CURSOR_LERP);
-                        leaf.y = lerp(leaf.y, targetY, CURSOR_LERP);
-                    } else {
-                        leaf.x = lerp(leaf.x, targetX, REST_LERP);
-                        leaf.y = lerp(leaf.y, targetY, REST_LERP);
-                    }
-
-                    var sway = Math.sin(now / leaf.rotDuration + leaf.rotPhase) * (2 * Math.PI / 180);
-                    leaf.rotation = leaf.restRotation + sway;
-
-                    drawLeaf(leaf);
+                    updateLeaf(leaves[i], frameScale);
+                    drawLeaf(leaves[i]);
                 }
 
-                requestAnimationFrame(step);
+                if (!hasActiveLeaves()) {
+                    animating = false;
+                    return;
+                }
+
+                requestAnimationFrame(animate);
             }
 
-            if (!isTouch) {
-                mouse.x = window.innerWidth * 0.5;
-                mouse.y = window.innerHeight * 0.5;
-
-                window.addEventListener("pointermove", function (e) {
-                    mouse.x = e.clientX;
-                    mouse.y = e.clientY;
-                    mouse.active = true;
-                    lastMoveTime = performance.now();
-                }, { passive: true });
-
-                window.addEventListener("pointerleave", function () {
-                    mouse.active = false;
-                });
-            } else if (window.DeviceOrientationEvent) {
-                window.addEventListener("deviceorientation", function (e) {
-                    if (e.gamma == null || e.beta == null) return;
-                    tilt.x = Math.max(-1, Math.min(1, e.gamma / 45));
-                    tilt.y = Math.max(-1, Math.min(1, (e.beta - 45) / 45));
-                    tilt.active = true;
-                }, { passive: true });
-            }
-
-            window.addEventListener("scroll", function () {
-                scrollY = window.scrollY;
-            }, { passive: true });
-
-            window.addEventListener("resize", function () {
-                resize();
-                initLeaves();
+            window.addEventListener("mousemove", function (e) {
+                mouse.vx = e.clientX - mouse.prevX;
+                mouse.vy = e.clientY - mouse.prevY;
+                mouse.speed = Math.sqrt(mouse.vx * mouse.vx + mouse.vy * mouse.vy);
+                mouse.prevX = mouse.x;
+                mouse.prevY = mouse.y;
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+                mouse.active = true;
             });
 
-            resize();
-            initLeaves();
-            requestAnimationFrame(step);
+            window.addEventListener("touchmove", function (e) {
+                if (!e.touches.length) return;
+                var t = e.touches[0];
+                mouse.vx = t.clientX - mouse.prevX;
+                mouse.vy = t.clientY - mouse.prevY;
+                mouse.speed = Math.sqrt(mouse.vx * mouse.vx + mouse.vy * mouse.vy);
+                mouse.prevX = mouse.x;
+                mouse.prevY = mouse.y;
+                mouse.x = t.clientX;
+                mouse.y = t.clientY;
+                mouse.active = true;
+            }, { passive: true });
+
+            window.addEventListener("resize", resizeCanvas);
+
+            resizeCanvas();
+            requestAnimationFrame(animate);
         })();
     </script>
 </body>
