@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Wild Wild — Defend The Habitat</title>
-    
+
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="any">
+    <link rel="apple-touch-icon" href="/favicon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dela+Gothic+One&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
@@ -51,7 +54,13 @@
             --cream: #E6DFD3;
             --off-white: #E6DFD3;
             --page-pad: clamp(1.25rem, 5vw, 6rem);
-            --section-pad-y: clamp(4rem, 10vw, 10rem);
+            --section-pad-y: clamp(2.75rem, 6vw, 5.5rem);
+            --section-title-size: clamp(1.875rem, 3.5vw, 2.5rem);
+            --section-eyebrow-size: clamp(0.6875rem, 1.2vw, 0.8125rem);
+            --section-body-size: clamp(1rem, 1.5vw, 1.0625rem);
+            --section-body-line: 1.65;
+            --section-body-max: 520px;
+            --section-subtitle-size: clamp(1.375rem, 2.5vw, 1.625rem);
             --content-max: 1280px;
             --touch-min: 44px;
             --safe-top: env(safe-area-inset-top, 0px);
@@ -170,6 +179,26 @@
             text-align: center;
         }
 
+        .hero + .section {
+            padding-top: clamp(2rem, 4.5vw, 3.5rem);
+        }
+
+        .section + .section {
+            padding-top: clamp(1.75rem, 3.5vw, 3rem);
+        }
+
+        .section:has(+ .divider) {
+            padding-bottom: clamp(1.75rem, 3.5vw, 3rem);
+        }
+
+        .divider + .section {
+            padding-top: clamp(1.75rem, 3.5vw, 3rem);
+        }
+
+        .section + .closing-cta {
+            padding-top: clamp(2rem, 4.5vw, 4rem);
+        }
+
         .section-inner {
             width: 100%;
             max-width: var(--content-max);
@@ -179,7 +208,7 @@
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: clamp(2.5rem, 5vw, 6rem);
+            gap: clamp(1.75rem, 3.5vw, 4rem);
             align-items: center;
             justify-items: center;
             text-align: center;
@@ -194,7 +223,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: clamp(2.5rem, 5vw, 4.5rem);
+            gap: clamp(1.75rem, 3.5vw, 3rem);
             max-width: var(--content-max);
             margin-left: auto;
             margin-right: auto;
@@ -635,17 +664,8 @@
 
         /* Mobile — vertical image: favour upper composition (logo + leopard) */
         @media (max-width: 768px) {
-            .hero-bg-picture {
-                opacity: 1;
-            }
-
             .hero-bg-image {
                 object-position: center top;
-                opacity: 1;
-            }
-
-            .hero-bg {
-                opacity: 0.4;
             }
         }
 
@@ -731,6 +751,10 @@
             display: inline-flex;
         }
 
+        .typewriter-text {
+            font-weight: 500;
+        }
+
         .typewriter-cursor {
             display: inline-block;
             width: 2px;
@@ -798,7 +822,7 @@
             width: 100%;
             max-width: 100%;
             height: auto;
-            max-height: min(78vh, 920px);
+            max-height: min(65vh, 780px);
             object-fit: cover;
             object-position: center;
             border-radius: 16px;
@@ -810,15 +834,51 @@
             margin-right: auto;
         }
 
-        .story h2 {
-            font-size: clamp(1.75rem, 4vw, 3rem);
-            margin-bottom: 2rem;
-            line-height: 1.1;
+        .section h2,
+        .section-copy h2,
+        .zones-ideology-intro h2 {
+            font-size: var(--section-title-size);
+            line-height: 1.12;
+            margin-bottom: 0.875rem;
+            letter-spacing: -0.02em;
         }
 
-        .story p {
-            margin: 0 auto 1.5rem;
-            max-width: 520px;
+        .section .subheading,
+        .section-copy .subheading {
+            font-size: var(--section-eyebrow-size);
+            letter-spacing: 0.14em;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .section-copy p,
+        .story p,
+        .zones-ideology-intro p,
+        .zone-block-copy p,
+        .sustainability .section-copy p,
+        .conservation .section-copy p,
+        .unboxing .section-copy p {
+            font-size: var(--section-body-size);
+            line-height: var(--section-body-line);
+            max-width: var(--section-body-max);
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-copy p,
+        .story p,
+        .zones-ideology-intro p,
+        .zone-block-copy p {
+            margin-bottom: 0.875rem;
+        }
+
+        .section-copy p:last-child,
+        .story p:last-child,
+        .zones-ideology-intro p:last-child,
+        .zone-block-copy p:last-child,
+        .conservation .section-copy p:last-child,
+        .unboxing .section-copy p:last-child {
+            margin-bottom: 0;
         }
 
         /* 3. Core Zone vs Buffer Zone */
@@ -838,7 +898,7 @@
         .zones-header {
             text-align: center;
             max-width: min(700px, 100%);
-            margin: 0 auto clamp(3rem, 6vw, 6rem) auto;
+            margin: 0 auto clamp(1.75rem, 3.5vw, 2.75rem) auto;
         }
 
         .section > .grid-2 {
@@ -848,22 +908,17 @@
             width: 100%;
         }
 
-        .zones-header h2 {
-            font-size: clamp(1.75rem, 4vw, 3rem);
-            margin-bottom: 1.5rem;
-        }
-
         .zones-ideology {
             max-width: var(--content-max);
-            margin: 0 auto clamp(3rem, 6vw, 4rem);
+            margin: 0 auto clamp(1.5rem, 3vw, 2.5rem);
             width: 100%;
         }
 
         .zones-ideology-intro {
             width: 100%;
             max-width: 720px;
-            margin: 0 auto clamp(2.5rem, 5vw, 4rem);
-            padding: clamp(2.25rem, 4.5vw, 3.25rem);
+            margin: 0 auto clamp(1.75rem, 3.5vw, 2.75rem);
+            padding: clamp(1.75rem, 3.5vw, 2.5rem);
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -872,21 +927,11 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
-        .zones-ideology-intro h2 {
-            font-size: clamp(1.75rem, 4vw, 3rem);
-            margin-bottom: 1.5rem;
-        }
-
-        .zones-ideology-intro p {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
         .zones-ideology-intro p + p,
         .zone-block-copy p + p,
         .conservation .section-copy p + p,
         .unboxing .section-copy p + p {
-            margin-top: 1.25rem;
+            margin-top: 0.75rem;
         }
 
         .zone-block {
@@ -895,43 +940,39 @@
             align-items: center;
             text-align: center;
             max-width: var(--content-max);
-            margin: 0 auto clamp(4rem, 8vw, 6rem);
+            margin: 0 auto clamp(2.5rem, 5vw, 3.5rem);
             width: 100%;
         }
 
         .zone-block:last-of-type {
-            margin-bottom: clamp(2rem, 4vw, 3rem);
+            margin-bottom: clamp(1.25rem, 2.5vw, 2rem);
         }
 
         .zone-block-copy {
             width: 100%;
             max-width: 720px;
-            margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
         }
 
         .zone-block-copy .zone-title {
             gap: 0.75rem;
-            margin-bottom: 1.75rem;
-            padding-bottom: 1.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
             border-bottom: 1px solid var(--divider-color);
         }
 
         .zone-block-copy .zone-title h3 {
-            font-size: clamp(2rem, 4.5vw, 2.75rem);
-            line-height: 1.05;
+            font-size: var(--section-subtitle-size);
+            line-height: 1.1;
             letter-spacing: -0.02em;
         }
 
         .zone-block-copy .zone-title .subheading {
-            font-size: clamp(0.8125rem, 1.4vw, 0.9375rem);
+            font-size: var(--section-eyebrow-size);
             letter-spacing: 0.14em;
         }
 
         .zone-block-copy p {
-            max-width: 100%;
-            margin: 0 auto;
-            font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
-            line-height: 1.75;
             color: var(--text-body);
         }
 
@@ -1019,9 +1060,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.25rem;
+            gap: 1rem;
             width: 100%;
-            margin-bottom: 2rem;
+            margin-bottom: 1.25rem;
         }
 
         .zone-images img {
@@ -1042,7 +1083,7 @@
         .material-photos {
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1rem;
         }
 
         .sustainability .section-media img,
@@ -1083,31 +1124,60 @@
             min-height: min(42vw, 520px);
         }
 
-        .spec-list {
-            margin-top: 3rem;
-            list-style: none;
+        .spec-table-wrap {
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
         }
 
-        .spec-item {
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9375rem;
+        }
+
+        .spec-table tbody tr:nth-child(even) {
+            background: rgba(164, 139, 111, 0.05);
+        }
+
+        .spec-table th,
+        .spec-table td {
+            padding: 0.65rem 1.15rem;
             border-bottom: 1px solid var(--divider-color);
-            padding: 1.5rem 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 0.35rem;
-            text-align: center;
+            text-align: left;
+            vertical-align: middle;
         }
 
-        .spec-label {
+        .spec-table tr:last-child th,
+        .spec-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .spec-table th {
             font-family: "Space Grotesk", sans-serif;
             font-weight: 600;
-            color: var(--text-body);
+            font-size: 0.6875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--chital-dust);
+            width: 32%;
+            white-space: nowrap;
+            border-right: 1px solid var(--divider-color);
         }
 
-        .spec-value {
+        .spec-table td {
             color: var(--text-body);
-            font-size: 1rem;
+            font-size: 0.9375rem;
+            line-height: 1.4;
         }
 
         /* 5. The Conservation Promise (Jungle Theme Override) */
@@ -1125,12 +1195,8 @@
             color: var(--text-body);
         }
 
-        .conservation p {
+        .conservation .section-copy p {
             color: var(--text-body);
-            font-size: 1.25rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .sustainability .section-copy,
@@ -1141,12 +1207,9 @@
             margin-right: auto;
         }
 
-        .sustainability p,
-        .unboxing p,
-        .conservation p {
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 520px;
+        .conservation-stat .subheading {
+            font-size: var(--section-eyebrow-size);
+            letter-spacing: 0.12em;
         }
 
         .conservation-stat {
@@ -1175,11 +1238,11 @@
             overflow: hidden;
             color: var(--text-heading);
             text-align: center;
-            padding: var(--section-pad-y) var(--page-pad);
-            padding-bottom: max(var(--section-pad-y), var(--safe-bottom));
-            min-height: 70vh;
-            min-height: 70dvh;
-            min-height: 70svh;
+            padding: clamp(2.75rem, 6vw, 5.5rem) var(--page-pad);
+            padding-bottom: max(clamp(2.75rem, 6vw, 5.5rem), var(--safe-bottom));
+            min-height: 55vh;
+            min-height: 55dvh;
+            min-height: 55svh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1215,13 +1278,14 @@
 
         .closing-cta h2 {
             color: var(--text-heading);
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            line-height: 1.1;
-            margin-bottom: 2rem;
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            line-height: 1.12;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
         }
 
         .drop-signup {
-            margin-top: 2.5rem;
+            margin-top: 1.75rem;
             max-width: 520px;
             margin-left: auto;
             margin-right: auto;
@@ -1348,11 +1412,11 @@
         @media (max-width: 1024px) {
             .grid-2 {
                 grid-template-columns: 1fr;
-                gap: clamp(2rem, 4vw, 3rem);
+                gap: clamp(1.5rem, 3vw, 2.25rem);
             }
 
             .zones-header {
-                margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+                margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
             }
         }
 
@@ -1419,20 +1483,28 @@
                 max-height: 85%;
             }
 
-            .spec-value {
-                font-size: 0.9375rem;
+            .spec-table th {
+                font-size: 0.625rem;
+                width: 36%;
             }
 
-            .conservation p {
-                font-size: 1.0625rem;
+            .spec-table th,
+            .spec-table td {
+                padding: 0.55rem 0.85rem;
+            }
+
+            .spec-table td {
+                font-size: 0.875rem;
+            }
+
+            :root {
+                --section-title-size: clamp(1.625rem, 6vw, 2rem);
+                --section-subtitle-size: clamp(1.25rem, 4.5vw, 1.5rem);
+                --section-body-size: 1rem;
             }
 
             .stat-large {
                 font-size: clamp(4rem, 22vw, 6.5rem);
-            }
-
-            p {
-                font-size: 1rem;
             }
 
             .photo-frame--placeholder {
@@ -1440,7 +1512,7 @@
             }
 
             .story-photo img {
-                max-height: min(68vh, 640px);
+                max-height: min(58vh, 560px);
             }
 
             .drop-signup-row {
@@ -1465,11 +1537,14 @@
                 padding: 0.75rem 1.25rem;
             }
 
-            .cta-button {
-                margin-top: 1.75rem;
+            .closing-cta .cta-button {
+                margin-top: 1.5rem;
                 display: inline-block;
-                width: 100%;
-                max-width: 360px;
+                width: auto;
+                max-width: none;
+                padding: 0.9rem 1.65rem;
+                font-size: 0.75rem;
+                letter-spacing: 0.12em;
                 text-align: center;
             }
 
@@ -1481,7 +1556,7 @@
             }
 
             .closing-cta h2 {
-                font-size: clamp(2rem, 9vw, 3rem);
+                font-size: var(--section-title-size);
             }
         }
 
@@ -1554,6 +1629,60 @@
             }
         }
 
+        /* Page load entrance — hero, logo, menu */
+        body.page-entering .hero-bg-image {
+            opacity: 0;
+        }
+
+        body.page-entering .hero-bg {
+            opacity: 0;
+        }
+
+        body.page-entered .hero-bg-image {
+            opacity: 1;
+            transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body.page-entered .hero-bg {
+            opacity: 0.4;
+            transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body.page-entering .nav-logo,
+        body.page-entering .nav-links .nav-link,
+        body.page-entering .nav-toggle {
+            opacity: 0;
+            transform: translateY(-12px);
+        }
+
+        body.page-entered .nav-logo {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: 0.35s;
+        }
+
+        body.page-entered .nav-links .nav-link {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body.page-entered .nav-links .nav-link:nth-child(1) { transition-delay: 0.5s; }
+        body.page-entered .nav-links .nav-link:nth-child(2) { transition-delay: 0.62s; }
+        body.page-entered .nav-links .nav-link:nth-child(3) { transition-delay: 0.74s; }
+        body.page-entered .nav-links .nav-link:nth-child(4) { transition-delay: 0.86s; }
+
+        body.page-entered .nav-toggle {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: 0.86s;
+        }
+
         .fade-in {
             opacity: 0;
             transform: translateY(28px);
@@ -1581,6 +1710,15 @@
                 transform: none;
             }
 
+            body.page-entering .hero-bg-image,
+            body.page-entering .hero-bg,
+            body.page-entering .nav-logo,
+            body.page-entering .nav-links .nav-link,
+            body.page-entering .nav-toggle {
+                opacity: 1;
+                transform: none;
+            }
+
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
@@ -1593,7 +1731,7 @@
         }
     </style>
 </head>
-<body>
+<body class="page-entering">
 
     <header>
         <a href="./" class="nav-logo" aria-label="Wild Wild home">
@@ -1726,31 +1864,35 @@
         <div class="section-stack">
             <div class="section-copy">
                 <h2>Material Integrity</h2>
-                <p class="subheading" style="color: var(--chital-dust); margin-bottom: 1.25rem;">Museum Standards. Wearable Form.</p>
+                <p class="subheading" style="color: var(--chital-dust);">Museum Standards. Wearable Form.</p>
                 <p>We treat our garments with the exact structural respect given to fine archival artwork. Our entire manufacturing chain is located within India — the same country where the wildlife on these shirts actually lives.</p>
 
-                <ul class="spec-list">
-                    <li class="spec-item">
-                        <span class="spec-label">Base Fabric</span>
-                        <span class="spec-value">100% GOTS-Certified Organic Cotton</span>
-                    </li>
-                    <li class="spec-item">
-                        <span class="spec-label">Weight</span>
-                        <span class="spec-value">220–240 GSM Heavyweight Premium Knit</span>
-                    </li>
-                    <li class="spec-item">
-                        <span class="spec-label">Print Medium</span>
-                        <span class="spec-value">OEKO-TEX Certified Water-Based Inks</span>
-                    </li>
-                    <li class="spec-item">
-                        <span class="spec-label">Texture</span>
-                        <span class="spec-value">Zero-PVC High-Density Eco-Puff + DTG Combination</span>
-                    </li>
-                    <li class="spec-item">
-                        <span class="spec-label">Art Print Insert</span>
-                        <span class="spec-value">Hahnemühle Bamboo or Agave Fine-Art Paper (FSC &amp; PEFC certified, acid-free, vegan)</span>
-                    </li>
-                </ul>
+                <div class="spec-table-wrap">
+                    <table class="spec-table">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Base Fabric</th>
+                                <td>100% GOTS-Certified Organic Cotton</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Weight</th>
+                                <td>220–240 GSM Heavyweight Premium Knit</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Print Medium</th>
+                                <td>OEKO-TEX Certified Water-Based Inks</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Texture</th>
+                                <td>Zero-PVC High-Density Eco-Puff + DTG Combination</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Art Print Insert</th>
+                                <td>Hahnemühle Bamboo or Agave Fine-Art Paper (FSC &amp; PEFC certified, acid-free, vegan)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="section-media material-photos">
                 <img
@@ -1775,15 +1917,16 @@
         <div class="section-stack">
             <div class="section-copy">
                 <h2>20% of Every Profit. No Exceptions.</h2>
-                <p class="subheading" style="color: var(--chital-dust); margin-bottom: 1.25rem;">Defend the Habitat.</p>
+                <p class="subheading" style="color: var(--chital-dust);">Defend the Habitat.</p>
                 <p>This is not a slogan borrowed from marketing. "Defend the Habitat" is what this brand does — on the P&amp;L, in the field, with every sale. The tagline came before the brand name was finalised. It is the entire reason Wild Wild exists.</p>
                 <p>We do not engage in vague corporate philanthropy. Sustainability without immediate, verifiable action is compromised.</p>
-                <p>Exactly 20% of all net profits generated across every Wild Wild drop are transferred directly to Wildlife SOS — one of India's largest and most credible wildlife protection organisations. They run the world's largest sloth bear rescue facilities, rescue and rehabilitate leopards from human-wildlife conflict zones, and provide lifetime care for rescued elephants. They ended the centuries-old dancing bear practice in India.</p>
+                <p>For our launch drop, Wild Wild is partnering with Wildlife SOS — one of India's largest and most credible wildlife protection organisations. Exactly 20% of net profits from every sale in this collection are transferred directly to them. They run the world's largest sloth bear rescue facilities, rescue and rehabilitate leopards from human-wildlife conflict zones, and provide lifetime care for rescued elephants. They ended the centuries-old dancing bear practice in India.</p>
                 <p>Their 80G certification means every rupee donated is tax-deductible and publicly documented. Our customers can see exactly where their contribution goes.</p>
+                <p>The 20% pledge holds for every drop. As Wild Wild grows, we will extend that same commitment to additional wildlife conservation organisations across India — each collection, a new partner. Same standard. Wider reach.</p>
             </div>
             <div class="conservation-stat">
                 <div class="stat-large">20%</div>
-                <span class="subheading" style="color: var(--cream); font-size: 1rem;">Of Net Profits — Permanently Pledged to Wildlife SOS</span>
+                <span class="subheading" style="color: var(--cream);">Of Net Profits Per Sale — Launch Partner: Wildlife SOS</span>
             </div>
         </div>
     </section>
@@ -1792,7 +1935,7 @@
         <div class="section-stack">
             <div class="section-copy">
                 <h2>The Unboxing</h2>
-                <p class="subheading" style="color: var(--chital-dust); margin-bottom: 1.25rem;">Every Box a Gallery Segment.</p>
+                <p class="subheading" style="color: var(--chital-dust);">Every Box a Gallery Segment.</p>
                 <p>Opening a Wild Wild shipment is an invitation to historical field documentation. Every order arrives in fully plastic-free, certified sustainable packaging.</p>
                 <p>Accompanying your garment is a gallery-grade Hahnemühle fine-art print — the original, uncropped field photograph that became your design, printed on FSC-certified Bamboo or Agave paper. On the reverse: the species' current survival metrics in the wild, and the exact camera telemetry from the moment of capture — focal length, shutter speed, lighting conditions.</p>
                 <p>Enclosed in a handmade Sage Green 300 GSM cotton-rag envelope from Sri Aurobindo Ashram, sealed by hand with a custom wood-mount stamp.</p>
@@ -1904,6 +2047,24 @@
             }
 
             initHeroTypewriter();
+
+            function initPageEntrance() {
+                function reveal() {
+                    document.body.classList.remove("page-entering");
+                    document.body.classList.add("page-entered");
+                }
+
+                if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                    reveal();
+                    return;
+                }
+
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(reveal);
+                });
+            }
+
+            initPageEntrance();
 
             function initSectionFadeIn() {
                 var fadeTargets = document.querySelectorAll(
@@ -2019,5 +2180,6 @@
         })();
     </script>
 
+    <script src="/js/site-footer.js" defer></script>
 </body>
 </html>

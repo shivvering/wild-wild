@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Wild Wild — Shop</title>
 
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="any">
+    <link rel="apple-touch-icon" href="/favicon.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dela+Gothic+One&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
@@ -88,7 +91,20 @@
         #leavesCanvas {
             width: 100%;
             height: 100%;
-            opacity: 0.92;
+            opacity: 0.82;
+        }
+
+        .ww-leaves-scene::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                ellipse at 50% 28%,
+                transparent 0%,
+                rgba(28, 26, 23, 0.18) 55%,
+                rgba(28, 26, 23, 0.42) 100%
+            );
+            pointer-events: none;
         }
 
         .shop-page {
@@ -368,6 +384,9 @@
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
             transition: all 0.3s ease;
             margin-top: 0.25rem;
+            overflow: hidden;
+            isolation: isolate;
+            animation: glass-tap-hint 7s ease-in-out infinite;
         }
 
         .glass-button::before {
@@ -384,11 +403,60 @@
             pointer-events: none;
         }
 
+        .glass-button::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(196, 168, 130, 0.35);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
         .glass-button:hover {
             background: var(--glass-bg-hover);
             border-color: var(--glass-border-hover);
             transform: translateY(-1px);
             box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-button:active {
+            transform: scale(0.98);
+            animation: none;
+        }
+
+        .glass-button.is-clicked::after {
+            animation: glass-ripple 0.55s ease-out forwards;
+        }
+
+        @keyframes glass-tap-hint {
+            0%, 88%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+            92% {
+                transform: scale(0.98);
+            }
+            96% {
+                transform: scale(1.02);
+                box-shadow: 0 6px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        @keyframes glass-ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.45;
+            }
+            100% {
+                width: 220%;
+                height: 220%;
+                opacity: 0;
+            }
         }
 
         .shop-footer {
@@ -410,38 +478,31 @@
             margin-bottom: 0.5rem;
         }
 
-        .ww-cart-toggle {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.65rem 1rem;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 999px;
-            color: var(--text-heading);
-            font-family: "Space Grotesk", sans-serif;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            cursor: pointer;
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
+        .glass-button.ww-cart-toggle {
+            width: auto;
+            margin-top: 0;
+            gap: 0.65rem;
+            padding: 0.85rem 1.35rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
         }
 
         .ww-cart-count {
+            position: relative;
+            z-index: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 1.25rem;
-            height: 1.25rem;
+            min-width: 1.35rem;
+            height: 1.35rem;
             padding: 0 0.35rem;
             border-radius: 999px;
-            background: var(--accent);
-            color: #1C1A17;
+            background: rgba(164, 139, 111, 0.28);
+            border: 1px solid rgba(164, 139, 111, 0.35);
+            color: var(--text-heading);
             font-size: 0.65rem;
             font-weight: 700;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
         .ww-cart-count[hidden] {
@@ -662,7 +723,7 @@
             <a href="./index.html" class="back-link" aria-label="Back to Wild Wild home">
                 <img src="./Logo/Wild%20Wild%20Logo%20Transparent%20Background.png" alt="Wild Wild" width="4861" height="6250" />
             </a>
-            <button type="button" class="ww-cart-toggle" id="wwCartToggle" aria-label="Open cart">
+            <button type="button" class="glass-button ww-cart-toggle" id="wwCartToggle" aria-label="Open cart">
                 Cart <span class="ww-cart-count" id="wwCartCount" hidden>0</span>
             </button>
         </div>
@@ -845,7 +906,7 @@
             if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
             var ctx = canvas.getContext("2d");
-            var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+            var DPR = Math.min(window.devicePixelRatio || 1, 2);
             var leaves = [];
             var windCycle = 0;
             var globalWind = 0;
@@ -859,7 +920,7 @@
             var PRE_SLOW_DURATION = 1200;
             var PRE_SLOW_TARGET = 0.48;
             var TRANSITION_DURATION = 3600;
-            var LEAF_SIZE = 54;
+            var LEAF_SIZE = 46;
             var slowMotionTriggerY = 0;
             var slowMotionTriggered = false;
             var transitionStart = null;
@@ -961,7 +1022,7 @@
                 if (window.innerWidth < 480) return 32;
                 if (window.innerWidth < 768) return 42;
                 if (window.innerWidth < 1024) return 54;
-                return 68;
+                return 64;
             }
 
             function hasActiveLeaves() {
@@ -971,14 +1032,52 @@
                 return false;
             }
 
-            var CANONICAL_PALETTE = {
-                light: [178, 202, 108],
-                mid: [118, 148, 68],
-                dark: [68, 92, 44],
-                edge: [108, 88, 52]
-            };
+            var BRAND_PALETTES = [
+                {
+                    light: [72, 88, 58],
+                    mid: [52, 68, 42],
+                    dark: [35, 48, 30],
+                    edge: [92, 76, 50],
+                    base: "rgba(58, 72, 44, 1)"
+                },
+                {
+                    light: [96, 116, 70],
+                    mid: [72, 92, 52],
+                    dark: [46, 60, 36],
+                    edge: [108, 88, 54],
+                    base: "rgba(78, 98, 54, 1)"
+                },
+                {
+                    light: [142, 122, 86],
+                    mid: [116, 98, 68],
+                    dark: [80, 66, 46],
+                    edge: [124, 104, 74],
+                    base: "rgba(124, 104, 74, 1)"
+                },
+                {
+                    light: [178, 154, 124],
+                    mid: [165, 139, 111],
+                    dark: [116, 96, 74],
+                    edge: [108, 88, 64],
+                    base: "rgba(165, 139, 111, 1)"
+                },
+                {
+                    light: [58, 76, 50],
+                    mid: [42, 58, 36],
+                    dark: [26, 38, 24],
+                    edge: [68, 54, 38],
+                    base: "rgba(44, 60, 36, 1)"
+                }
+            ];
 
-            var CANONICAL_COLOR = "rgba(148, 175, 88, 1)";
+            function pickPalette() {
+                var r = Math.random();
+                if (r < 0.30) return BRAND_PALETTES[0];
+                if (r < 0.52) return BRAND_PALETTES[1];
+                if (r < 0.68) return BRAND_PALETTES[4];
+                if (r < 0.84) return BRAND_PALETTES[2];
+                return BRAND_PALETTES[3];
+            }
 
             var CANONICAL_EDGE_VARIATION = [
                 0.97, 1.02, 0.99, 1.01, 1.0, 0.98, 1.03, 0.97, 1.01, 0.99,
@@ -1020,7 +1119,17 @@
                 return rgba.replace(/,\s*1\)/, ", " + newOp + ")");
             }
 
+            function generateEdgeVariation() {
+                var arr = [];
+                for (var i = 0; i < 16; i += 1) {
+                    arr.push(0.965 + Math.random() * 0.07);
+                }
+                return arr;
+            }
+
             function createLeaf() {
+                var palette = pickPalette();
+
                 return {
                     x: random(0, canvas.width),
                     y: random(-canvas.height * 1.2, -10),
@@ -1031,22 +1140,26 @@
                     wobble: random(0, Math.PI * 2),
                     wobbleSpeed: random(0.003, 0.008),
                     wobbleAmplitude: random(0.06, 0.18),
-                    size: LEAF_SIZE,
-                    opacity: 0.86,
-                    shape: 0,
-                    color: CANONICAL_COLOR,
-                    palette: CANONICAL_PALETTE,
-                    depth: random(0.75, 1.0),
+                    size: LEAF_SIZE * random(0.9, 1.06),
+                    opacity: random(0.58, 0.86),
+                    color: palette.base,
+                    palette: {
+                        light: palette.light.slice(),
+                        mid: palette.mid.slice(),
+                        dark: palette.dark.slice(),
+                        edge: palette.edge.slice()
+                    },
+                    depth: random(0.65, 1.0),
                     flip: Math.random() > 0.5 ? 1 : -1,
                     tiltPhase: random(0, Math.PI * 2),
                     tiltSpeed: random(0.004, 0.011),
-                    curl: 0.06,
-                    edgeRoughness: 0.84,
+                    curl: random(0.05, 0.07),
+                    edgeRoughness: random(0.9, 0.98),
                     veinCount: CANONICAL_VEIN_NETWORK.length,
                     veinNetwork: CANONICAL_VEIN_NETWORK,
-                    midribCurve: 0.02,
-                    surfaceLightOffset: { x: -0.08, y: -0.15 },
-                    edgeVariation: CANONICAL_EDGE_VARIATION,
+                    midribCurve: random(-0.02, 0.02),
+                    surfaceLightOffset: { x: random(-0.1, -0.05), y: random(-0.16, -0.1) },
+                    edgeVariation: generateEdgeVariation(),
                     textureLines: CANONICAL_TEXTURE_LINES,
                     disturbed: false,
                     disturbVx: 0,
@@ -1061,76 +1174,54 @@
             function traceLeafBody(ctx2d, leaf, s) {
                 var ev = leaf.edgeVariation;
                 var er = leaf.edgeRoughness;
+                var w = function(i, v) {
+                    return v * (ev[i % 16] || 1) * (0.92 + er * 0.08);
+                };
 
-                if (leaf.shape === 0) {
-                    ctx2d.moveTo(0, -s * 0.55);
-                    ctx2d.bezierCurveTo(
-                        s * 0.52 * ev[0] * er, -s * 0.38 * ev[1],
-                        s * 0.50 * ev[2], s * 0.20 * ev[3],
-                        s * 0.04, s * 0.55
-                    );
-                    ctx2d.bezierCurveTo(
-                        s * 0.02, s * 0.68 * ev[4],
-                        -s * 0.02, s * 0.68 * ev[5],
-                        -s * 0.04, s * 0.55
-                    );
-                    ctx2d.bezierCurveTo(
-                        -s * 0.48 * ev[6], s * 0.22 * ev[7],
-                        -s * 0.50 * ev[8], -s * 0.40 * ev[9],
-                        0, -s * 0.55
-                    );
-                } else if (leaf.shape === 1) {
-                    ctx2d.moveTo(s * 0.02, -s * 0.60);
-                    ctx2d.bezierCurveTo(
-                        s * 0.44 * ev[0] * er, -s * 0.50 * ev[1],
-                        s * 0.46 * ev[2], s * 0.40 * ev[3],
-                        s * 0.02, s * 0.62
-                    );
-                    ctx2d.bezierCurveTo(
-                        -s * 0.42 * ev[4], s * 0.42 * ev[5],
-                        -s * 0.44 * ev[6], -s * 0.52 * ev[7],
-                        s * 0.02, -s * 0.60
-                    );
-                } else if (leaf.shape === 2) {
-                    ctx2d.moveTo(0, -s * 0.48);
-                    ctx2d.bezierCurveTo(
-                        s * 0.60 * ev[0] * er, -s * 0.46 * ev[1],
-                        s * 0.70 * ev[2], s * 0.18 * ev[3],
-                        s * 0.10, s * 0.56
-                    );
-                    ctx2d.bezierCurveTo(
-                        s * 0.04, s * 0.64 * ev[4],
-                        -s * 0.04, s * 0.64 * ev[5],
-                        -s * 0.10, s * 0.56
-                    );
-                    ctx2d.bezierCurveTo(
-                        -s * 0.68 * ev[6], s * 0.20 * ev[7],
-                        -s * 0.58 * ev[8], -s * 0.47 * ev[9],
-                        0, -s * 0.48
-                    );
-                } else {
-                    ctx2d.moveTo(0, -s * 0.50);
-                    ctx2d.bezierCurveTo(
-                        s * 0.18 * ev[0], -s * 0.58 * ev[1],
-                        s * 0.50 * ev[2], -s * 0.30 * ev[3],
-                        s * 0.52 * ev[4], s * 0.08
-                    );
-                    ctx2d.bezierCurveTo(
-                        s * 0.48 * ev[5], s * 0.42 * ev[6],
-                        s * 0.16, s * 0.60,
-                        0, s * 0.62
-                    );
-                    ctx2d.bezierCurveTo(
-                        -s * 0.16, s * 0.60,
-                        -s * 0.48 * ev[7], s * 0.44 * ev[8],
-                        -s * 0.52 * ev[9], s * 0.08
-                    );
-                    ctx2d.bezierCurveTo(
-                        -s * 0.50 * ev[10], -s * 0.30 * ev[11],
-                        -s * 0.18, -s * 0.58,
-                        0, -s * 0.50
-                    );
-                }
+                // Single lanceolate forest-leaf silhouette — acute tip, mid-blade width, tapered base
+                ctx2d.moveTo(0, -s * 0.58);
+
+                ctx2d.quadraticCurveTo(
+                    s * w(0, 0.12), -s * 0.51,
+                    s * w(1, 0.30), -s * 0.38
+                );
+                ctx2d.quadraticCurveTo(
+                    s * w(2, 0.40), -s * 0.22,
+                    s * w(3, 0.43), -s * 0.06
+                );
+                ctx2d.quadraticCurveTo(
+                    s * w(4, 0.41), s * 0.10,
+                    s * w(5, 0.35), s * 0.24
+                );
+                ctx2d.quadraticCurveTo(
+                    s * w(6, 0.24), s * 0.38,
+                    s * w(7, 0.12), s * 0.48
+                );
+                ctx2d.quadraticCurveTo(
+                    s * w(8, 0.05), s * 0.54,
+                    0, s * 0.56
+                );
+
+                ctx2d.quadraticCurveTo(
+                    -s * w(9, 0.05), s * 0.54,
+                    -s * w(10, 0.12), s * 0.48
+                );
+                ctx2d.quadraticCurveTo(
+                    -s * w(11, 0.24), s * 0.38,
+                    -s * w(12, 0.35), s * 0.24
+                );
+                ctx2d.quadraticCurveTo(
+                    -s * w(13, 0.41), s * 0.10,
+                    -s * w(14, 0.43), -s * 0.06
+                );
+                ctx2d.quadraticCurveTo(
+                    -s * w(15, 0.40), -s * 0.22,
+                    -s * w(0, 0.30), -s * 0.38
+                );
+                ctx2d.quadraticCurveTo(
+                    -s * w(1, 0.12), -s * 0.51,
+                    0, -s * 0.58
+                );
             }
 
             function veinColor(palette, opacity, strength) {
@@ -1149,29 +1240,29 @@
                 ctx2d.lineJoin = "round";
 
                 ctx2d.beginPath();
-                ctx2d.moveTo(midX + s * slo.x * 0.15, -s * 0.54);
+                ctx2d.moveTo(midX + s * slo.x * 0.12, -s * 0.56);
                 ctx2d.quadraticCurveTo(
-                    midX + s * curve, 0,
-                    midX + s * 0.02, s * 0.60
+                    midX + s * curve, -s * 0.02,
+                    midX, s * 0.52
                 );
-                ctx2d.strokeStyle = veinColor(p, op * 0.52, 1);
-                ctx2d.lineWidth = Math.max(1.1, s * 0.028);
+                ctx2d.strokeStyle = veinColor(p, op * 0.48, 1);
+                ctx2d.lineWidth = Math.max(0.9, s * 0.022);
                 ctx2d.stroke();
 
                 ctx2d.beginPath();
-                ctx2d.moveTo(midX + s * slo.x * 0.15, -s * 0.54);
+                ctx2d.moveTo(midX + s * slo.x * 0.12, -s * 0.56);
                 ctx2d.quadraticCurveTo(
-                    midX + s * curve, 0,
-                    midX + s * 0.02, s * 0.60
+                    midX + s * curve, -s * 0.02,
+                    midX, s * 0.52
                 );
-                ctx2d.strokeStyle = veinColor(p, op * 0.22, 0.8);
-                ctx2d.lineWidth = Math.max(0.35, s * 0.008);
+                ctx2d.strokeStyle = "rgba(" + p.light.join(",") + "," + (op * 0.14) + ")";
+                ctx2d.lineWidth = Math.max(0.28, s * 0.006);
                 ctx2d.stroke();
 
                 var network = leaf.veinNetwork || [];
                 for (var i = 0; i < network.length; i += 1) {
                     var vn = network[i];
-                    var startY = -s * 0.46 + vn.t * s * 1.02;
+                    var startY = -s * 0.48 + vn.t * s * 0.98;
                     var angleRad = (vn.angle * Math.PI) / 180;
                     var veinLen = s * vn.length * (1 - vn.t * 0.28);
                     var endX = midX + vn.side * Math.cos(angleRad) * veinLen;
@@ -1215,7 +1306,7 @@
                 }
             }
 
-            function drawLeafShape(ctx2d, leaf, apparentSize, apparentOpacity) {
+            function drawLeafShape(ctx2d, leaf, apparentSize, apparentOpacity, shadowOnly) {
                 var s = apparentSize;
                 var op = apparentOpacity;
                 var slo = leaf.surfaceLightOffset;
@@ -1226,31 +1317,52 @@
                 traceLeafBody(ctx2d, leaf, s);
                 ctx2d.closePath();
 
-                var gradient = ctx2d.createRadialGradient(
-                    s * slo.x, s * slo.y, 0,
-                    0, 0, s * 0.92
-                );
-                gradient.addColorStop(0, "rgba(" + p.light.join(",") + "," + (op * 0.98) + ")");
-                gradient.addColorStop(0.35, colorWithOpacity(leaf.color, op * 0.94));
-                gradient.addColorStop(0.72, "rgba(" + p.mid.join(",") + "," + (op * 0.82) + ")");
-                gradient.addColorStop(1, "rgba(" + p.dark.join(",") + "," + (op * 0.68) + ")");
+                if (shadowOnly) {
+                    ctx2d.fillStyle = "rgba(18, 22, 14, " + (op * 0.55) + ")";
+                    ctx2d.fill();
+                    ctx2d.restore();
+                    return;
+                }
 
-                ctx2d.fillStyle = gradient;
+                var axial = ctx2d.createLinearGradient(0, -s * 0.58, 0, s * 0.56);
+                axial.addColorStop(0, "rgba(" + p.light.join(",") + "," + (op * 0.92) + ")");
+                axial.addColorStop(0.42, colorWithOpacity(leaf.color, op * 0.96));
+                axial.addColorStop(0.78, "rgba(" + p.mid.join(",") + "," + (op * 0.84) + ")");
+                axial.addColorStop(1, "rgba(" + p.dark.join(",") + "," + (op * 0.72) + ")");
+                ctx2d.fillStyle = axial;
                 ctx2d.fill();
 
-                ctx2d.strokeStyle = "rgba(" + p.edge.join(",") + "," + (op * 0.42) + ")";
-                ctx2d.lineWidth = 0.7;
+                ctx2d.save();
+                ctx2d.clip();
+                var glow = ctx2d.createRadialGradient(
+                    s * slo.x, s * slo.y, 0,
+                    s * slo.x * 0.4, s * slo.y * 0.4, s * 0.95
+                );
+                glow.addColorStop(0, "rgba(255, 248, 230, " + (op * 0.14) + ")");
+                glow.addColorStop(0.35, "rgba(255, 248, 230, " + (op * 0.04) + ")");
+                glow.addColorStop(1, "rgba(0, 0, 0, " + (op * 0.1) + ")");
+                ctx2d.fillStyle = glow;
+                ctx2d.fillRect(-s, -s, s * 2, s * 2);
+                ctx2d.restore();
+
+                ctx2d.strokeStyle = "rgba(" + p.edge.join(",") + "," + (op * 0.5) + ")";
+                ctx2d.lineWidth = Math.max(0.55, s * 0.014);
                 ctx2d.stroke();
 
                 drawRealisticVeins(ctx2d, leaf, s, op);
 
                 ctx2d.beginPath();
-                ctx2d.moveTo(s * 0.02, s * 0.58);
-                ctx2d.quadraticCurveTo(s * 0.02, s * 0.74, s * 0.01, s * 0.84);
-                ctx2d.strokeStyle = "rgba(" + p.edge.join(",") + "," + (op * 0.55) + ")";
-                ctx2d.lineWidth = Math.max(0.8, s * 0.018);
+                ctx2d.moveTo(0, s * 0.56);
+                ctx2d.quadraticCurveTo(s * 0.012, s * 0.62, 0, s * 0.70);
+                ctx2d.strokeStyle = "rgba(" + p.edge.join(",") + "," + (op * 0.62) + ")";
+                ctx2d.lineWidth = Math.max(0.75, s * 0.016);
                 ctx2d.lineCap = "round";
                 ctx2d.stroke();
+
+                ctx2d.beginPath();
+                ctx2d.ellipse(0, s * 0.71, s * 0.018, s * 0.028, 0, 0, Math.PI * 2);
+                ctx2d.fillStyle = "rgba(" + p.dark.join(",") + "," + (op * 0.75) + ")";
+                ctx2d.fill();
 
                 for (var tl = 0; tl < leaf.textureLines.length; tl += 1) {
                     var line = leaf.textureLines[tl];
@@ -1267,9 +1379,10 @@
 
                 ctx2d.save();
                 ctx2d.clip();
-                var rimGradient = ctx2d.createRadialGradient(0, 0, s * 0.25, 0, 0, s * 0.9);
-                rimGradient.addColorStop(0.7, "rgba(0,0,0,0)");
-                rimGradient.addColorStop(1, "rgba(" + p.edge.join(",") + "," + (op * 0.18) + ")");
+                var rimGradient = ctx2d.createRadialGradient(0, 0, s * 0.2, 0, 0, s * 0.92);
+                rimGradient.addColorStop(0.65, "rgba(0,0,0,0)");
+                rimGradient.addColorStop(0.88, "rgba(" + p.edge.join(",") + "," + (op * 0.12) + ")");
+                rimGradient.addColorStop(1, "rgba(" + p.dark.join(",") + "," + (op * 0.22) + ")");
                 ctx2d.fillStyle = rimGradient;
                 ctx2d.fillRect(-s, -s, s * 2, s * 2);
                 ctx2d.restore();
@@ -1279,7 +1392,7 @@
 
             function bakeLeafSprite(leaf) {
                 var s = leaf.size;
-                var pad = Math.ceil(s * 0.35);
+                var pad = Math.ceil(s * 0.4);
                 var w = Math.ceil(s * 2 + pad * 2);
                 var h = Math.ceil(s * 2.4 + pad * 2);
                 var off = document.createElement("canvas");
@@ -1287,7 +1400,12 @@
                 off.height = h;
                 var octx = off.getContext("2d");
                 octx.translate(w / 2, h / 2);
-                drawLeafShape(octx, leaf, s, 1);
+                octx.save();
+                octx.translate(2.2, 3);
+                octx.globalAlpha = 0.22;
+                drawLeafShape(octx, leaf, s, 1, true);
+                octx.restore();
+                drawLeafShape(octx, leaf, s, 1, false);
                 leaf.sprite = off;
                 leaf.spriteW = w;
                 leaf.spriteH = h;
@@ -1354,9 +1472,9 @@
                 ctx.translate(leaf.x, leaf.y);
                 ctx.rotate((leaf.rotation * Math.PI) / 180);
 
-                var tilt = 0.72 + Math.sin(leaf.tiltPhase) * 0.28;
+                var tilt = 0.76 + Math.sin(leaf.tiltPhase) * 0.22;
                 ctx.scale(leaf.flip * tilt, 1);
-                ctx.globalAlpha = leaf.opacity * (0.38 + leaf.depth * 0.62);
+                ctx.globalAlpha = leaf.opacity * (0.34 + leaf.depth * 0.58);
                 ctx.drawImage(leaf.sprite, -leaf.spriteW / 2, -leaf.spriteH / 2);
                 ctx.restore();
             }
@@ -1378,7 +1496,7 @@
             }
 
             function resizeCanvas() {
-                DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+                DPR = Math.min(window.devicePixelRatio || 1, 2);
                 canvas.width = Math.floor(window.innerWidth * DPR);
                 canvas.height = Math.floor(window.innerHeight * DPR);
                 canvas.style.width = window.innerWidth + "px";
@@ -1452,5 +1570,6 @@
             requestAnimationFrame(animate);
         })();
     </script>
+    <script src="/js/site-footer.js" defer></script>
 </body>
 </html>
