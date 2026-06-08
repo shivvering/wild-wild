@@ -1689,6 +1689,17 @@
             transition: opacity 1.5s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
+        body.page-entering .hero-bottom,
+        body.page-entered:not(.hero-typing-started) .hero-bottom {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        body.hero-typing-started .hero-bottom {
+            opacity: 1;
+            transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
         body.page-entering .nav-logo,
         body.page-entering .nav-links .nav-link,
         body.page-entering .nav-toggle {
@@ -1755,9 +1766,12 @@
             body.page-entering .hero-bg,
             body.page-entering .nav-logo,
             body.page-entering .nav-links .nav-link,
-            body.page-entering .nav-toggle {
+            body.page-entering .nav-toggle,
+            body.page-entering .hero-bottom,
+            body.page-entered:not(.hero-typing-started) .hero-bottom {
                 opacity: 1;
                 transform: none;
+                pointer-events: auto;
             }
 
             *, *::before, *::after {
@@ -2060,8 +2074,13 @@
                 });
             }
 
+            var HERO_IMAGE_FADE_MS = 1500;
+            var HERO_TYPEWRITER_DELAY_MS = 350;
+
             function initHeroTypewriter() {
                 if (!typewriterLines.length) return;
+
+                document.body.classList.add("hero-typing-started");
 
                 if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
                     typewriterLines.forEach(function (el) {
@@ -2087,21 +2106,32 @@
                 })(0);
             }
 
-            initHeroTypewriter();
-
             function initPageEntrance() {
                 function reveal() {
                     document.body.classList.remove("page-entering");
                     document.body.classList.add("page-entered");
                 }
 
+                function startTypewriterAfterHeroFade() {
+                    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+                        initHeroTypewriter();
+                        return;
+                    }
+
+                    setTimeout(initHeroTypewriter, HERO_IMAGE_FADE_MS + HERO_TYPEWRITER_DELAY_MS);
+                }
+
                 if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
                     reveal();
+                    startTypewriterAfterHeroFade();
                     return;
                 }
 
                 requestAnimationFrame(function () {
-                    requestAnimationFrame(reveal);
+                    requestAnimationFrame(function () {
+                        reveal();
+                        startTypewriterAfterHeroFade();
+                    });
                 });
             }
 
