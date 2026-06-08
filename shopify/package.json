@@ -1,0 +1,21 @@
+{
+  "name": "wild-wild-shopify",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Wild Wild Shopify backend integration — development / pre-launch only",
+  "scripts": {
+    "setup": "node scripts/setup-all.js",
+    "setup:metafields": "node scripts/setup-metafields.js",
+    "setup:products": "node scripts/setup-products.js",
+    "setup:discount": "node scripts/create-discount.js",
+    "issue:gift-card": "node scripts/issue-gift-card.js",
+    "issue:creators": "node scripts/issue-creator-credits.js",
+    "list:gift-cards": "node scripts/list-gift-cards.js",
+    "verify": "node scripts/verify-store-settings.js",
+    "export:config": "node scripts/export-storefront-config.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,7 @@
+.env
+.env.local
+config/storefront.public.js
+config/variant-map.generated.json
+config/creator-gift-cards.generated.json
+.shopify/
+node_modules/

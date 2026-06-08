@@ -1,0 +1,21 @@
+query RunInput {
+  cart {
+    lines {
+      quantity
+      merchandise {
+        ... on ProductVariant {
+          id
+          product {
+            id
+          }
+        }
+      }
+    }
+    noPrintAttributes: attribute(key: "ww_no_print_active") {
+      value
+    }
+  }
+  discount {
+    discountClasses
+  }
+}

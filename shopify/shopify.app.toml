@@ -1,0 +1,17 @@
+# Wild Wild Shopify app — development only
+# Install Shopify CLI: npm install -g @shopify/cli @shopify/app
+# Then: cd shopify && shopify app config link && shopify app deploy
+
+name = "wild-wild-backend"
+client_id = "REPLACE_AFTER_SHOPIFY_APP_LINK"
+application_url = "https://localhost"
+embedded = true
+
+[access_scopes]
+scopes = "write_products,read_products,write_discounts,read_discounts,write_customers,read_customers,write_gift_cards,read_gift_cards,write_orders,read_orders"
+
+[auth]
+redirect_urls = ["https://localhost/auth/callback"]
+
+[build]
+automatically_update_urls_on_dev = true

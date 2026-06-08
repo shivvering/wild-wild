@@ -1,0 +1,21 @@
+api_version = "2025-01"
+
+[[extensions]]
+name = "no-waste-discount"
+handle = "no-waste-discount"
+type = "function"
+uid = "wild-wild-no-waste-discount"
+description = "Applies ₹150 off when customer opts out of duplicate Hahnemühle print (2+ same design)."
+
+  [[extensions.targeting]]
+  target = "purchase.product-discount.run"
+  input_query = "src/run.graphql"
+  export = "run"
+
+  [extensions.build]
+  command = ""
+  path = "src/run.js"
+
+  [extensions.ui.paths]
+  create = "/"
+  details = "/"

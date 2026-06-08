@@ -1,0 +1,12 @@
+website/
+shopify/
+Videos/
+Photos/
+Leopard Photo/
+Hero Image Landing Page/
+Landing Page Animation/
+Tracking_Animation_Landing_Page/
+.github/
+.git/
+*.code-workspace
+.DS_Store

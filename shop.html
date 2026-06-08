@@ -402,6 +402,249 @@
             line-height: 1.7;
         }
 
+        .shop-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ww-cart-toggle {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 999px;
+            color: var(--text-heading);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+        }
+
+        .ww-cart-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.25rem;
+            height: 1.25rem;
+            padding: 0 0.35rem;
+            border-radius: 999px;
+            background: var(--accent);
+            color: #1C1A17;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+
+        .ww-cart-count[hidden] {
+            display: none;
+        }
+
+        .ww-cart-drawer {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .ww-cart-drawer.is-open {
+            pointer-events: auto;
+        }
+
+        .ww-cart-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(12, 10, 8, 0.55);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .ww-cart-drawer.is-open .ww-cart-backdrop {
+            opacity: 1;
+        }
+
+        .ww-cart-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: min(420px, 100%);
+            height: 100%;
+            background: rgba(28, 26, 23, 0.96);
+            border-left: 1px solid var(--glass-border);
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            transform: translateX(100%);
+            transition: transform 0.35s ease;
+            display: flex;
+            flex-direction: column;
+            padding: calc(1rem + var(--safe-top)) 1.25rem calc(1rem + var(--safe-bottom));
+        }
+
+        .ww-cart-drawer.is-open .ww-cart-panel {
+            transform: translateX(0);
+        }
+
+        .ww-cart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .ww-cart-header h2 {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-heading);
+        }
+
+        .ww-cart-close {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .ww-cart-body {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .ww-cart-empty {
+            color: rgba(230, 223, 211, 0.55);
+            font-size: 0.9rem;
+            padding: 2rem 0;
+        }
+
+        .ww-cart-lines {
+            list-style: none;
+            margin: 0 0 1.25rem;
+            padding: 0;
+        }
+
+        .ww-cart-lines li {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.25rem 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--divider-color);
+            font-size: 0.875rem;
+        }
+
+        .ww-line-title {
+            grid-column: 1 / -1;
+            color: var(--text-heading);
+        }
+
+        .ww-line-qty,
+        .ww-line-price {
+            color: var(--accent);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 0.8rem;
+        }
+
+        .ww-no-print-toggle {
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid rgba(164, 139, 111, 0.25);
+            border-radius: 12px;
+            background: rgba(50, 60, 40, 0.35);
+        }
+
+        .ww-toggle-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-heading);
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .ww-toggle-body,
+        .ww-toggle-note {
+            font-size: 0.8rem;
+            line-height: 1.55;
+            color: rgba(230, 223, 211, 0.82);
+            margin-bottom: 0.65rem;
+        }
+
+        .ww-toggle-note {
+            font-style: italic;
+            color: var(--species-muted);
+            margin-bottom: 0;
+        }
+
+        .ww-toggle-switch {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            cursor: pointer;
+            margin: 0.75rem 0;
+        }
+
+        .ww-toggle-switch input {
+            margin-top: 0.2rem;
+            accent-color: var(--accent);
+        }
+
+        .ww-toggle-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .ww-cart-totals {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--divider-color);
+            font-size: 0.875rem;
+        }
+
+        .ww-cart-totals div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .ww-cart-discount {
+            font-size: 0.75rem;
+            color: var(--accent);
+            margin-top: 0.5rem;
+        }
+
+        .ww-cart-feedback {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin: 0.5rem 0;
+            min-height: 1.2em;
+        }
+
+        .ww-cart-feedback.is-error {
+            color: #d4a574;
+        }
+
+        .ww-cart-footer {
+            padding-top: 1rem;
+            border-top: 1px solid var(--divider-color);
+        }
+
+        .glass-button:disabled {
+            opacity: 0.55;
+            cursor: wait;
+        }
+
         @media (max-width: 768px) {
             .shop-grid {
                 grid-template-columns: 1fr;
@@ -415,9 +658,14 @@
         <div class="ww-leaves-scene" aria-hidden="true">
             <canvas id="leavesCanvas"></canvas>
         </div>
-        <a href="./index.html" class="back-link" aria-label="Back to Wild Wild home">
-            <img src="./Logo/Wild%20Wild%20Logo%20Transparent%20Background.png" alt="Wild Wild" width="4861" height="6250" />
-        </a>
+        <div class="shop-top-bar">
+            <a href="./index.html" class="back-link" aria-label="Back to Wild Wild home">
+                <img src="./Logo/Wild%20Wild%20Logo%20Transparent%20Background.png" alt="Wild Wild" width="4861" height="6250" />
+            </a>
+            <button type="button" class="ww-cart-toggle" id="wwCartToggle" aria-label="Open cart">
+                Cart <span class="ww-cart-count" id="wwCartCount" hidden>0</span>
+            </button>
+        </div>
 
         <header class="shop-header">
             <h1>Drop 01</h1>
@@ -434,7 +682,7 @@
                         <p class="zone-descriptor">Safari &amp; Everyday Wear</p>
                     </div>
 
-                    <article class="product-card" data-product="heera">
+                    <article class="product-card" data-product="heera" data-zone="core">
                         <div class="product-image-placeholder product-image-placeholder--photo">
                             <img src="./T-Shirts%20On%20Landing%20Page/Heera%20Core%20Zone.png" alt="Heira — Core Zone tee, Bear Mauve" loading="lazy" width="4688" height="2344" />
                         </div>
@@ -457,7 +705,7 @@
                         <p class="zone-descriptor">Safari &amp; Everyday Wear</p>
                     </div>
 
-                    <article class="product-card" data-product="egrets">
+                    <article class="product-card" data-product="egrets" data-zone="core">
                         <div class="product-image-placeholder product-image-placeholder--photo">
                             <img src="./T-Shirts%20On%20Landing%20Page/Egrets%20Core%20Zone.png" alt="The Egrets — Core Zone tee, Snow Leopard Ash" loading="lazy" width="4688" height="2344" />
                         </div>
@@ -482,7 +730,7 @@
                         <p class="zone-descriptor">Lifestyle &amp; Urban Streetwear</p>
                     </div>
 
-                    <article class="product-card" data-product="sarus">
+                    <article class="product-card" data-product="sarus" data-zone="buffer">
                         <div class="product-image-placeholder product-image-placeholder--video">
                             <video autoplay muted playsinline loop="false" preload="metadata" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Sarus Crane product video">
                                 <source src="./Videos/Sarus &amp; Water_Vertical.mp4" type="video/mp4">
@@ -508,7 +756,7 @@
                         <p class="zone-descriptor">Lifestyle &amp; Urban Streetwear</p>
                     </div>
 
-                    <article class="product-card" data-product="jackal">
+                    <article class="product-card" data-product="jackal" data-zone="buffer">
                         <div class="product-image-placeholder product-image-placeholder--video">
                             <video autoplay muted playsinline loop="false" preload="metadata" onended="this.pause(); this.currentTime = this.duration - 0.1;" aria-label="Indian Jackal product video">
                                 <source src="./Videos/Indian Jackal Blender Video.mp4" type="video/mp4">
@@ -537,6 +785,25 @@
         </footer>
     </div>
 
+    <aside class="ww-cart-drawer" id="wwCartDrawer" aria-hidden="true" aria-label="Shopping cart">
+        <div class="ww-cart-backdrop" id="wwCartBackdrop"></div>
+        <div class="ww-cart-panel" role="dialog" aria-modal="true" aria-labelledby="wwCartTitle">
+            <div class="ww-cart-header">
+                <h2 id="wwCartTitle">Your Cart</h2>
+                <button type="button" class="ww-cart-close" id="wwCartClose" aria-label="Close cart">&times;</button>
+            </div>
+            <p class="ww-cart-feedback" id="wwCartFeedback" hidden></p>
+            <div class="ww-cart-body" id="wwCartBody">
+                <p class="ww-cart-empty">Your cart is empty.</p>
+            </div>
+            <div class="ww-cart-footer">
+                <button type="button" class="glass-button" id="wwCartCheckout">Checkout</button>
+            </div>
+        </div>
+    </aside>
+
+    <script src="./shopify/config/storefront.public.example.js"></script>
+    <script src="./shopify/js/wildwild-cart.js"></script>
     <script>
         (function () {
             /* Product video autoplay */
