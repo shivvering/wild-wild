@@ -1,0 +1,77 @@
+{
+  "drop": "Drop 01",
+  "currency": "INR",
+  "price": "2499.00",
+  "metafieldNamespace": "wildwild",
+  "products": [
+    {
+      "handle": "heera-rajaji-2025",
+      "catalogKey": "heera",
+      "title": "Heera — Rajaji National Park 2025",
+      "colourway": "Bear Mauve",
+      "zone": "core",
+      "species": "Indian Leopard",
+      "location": "Rajaji National Park, Uttarakhand",
+      "year": "2025",
+      "conservation_status": "Vulnerable (IUCN Red List)",
+      "print_included": true,
+      "sizes": ["S", "M", "L", "XL", "XXL"]
+    },
+    {
+      "handle": "egrets-manglajodi-2025",
+      "catalogKey": "egrets",
+      "title": "The Egrets — Manglajodi 2025",
+      "colourway": "Snow Leopard Ash",
+      "zone": "core",
+      "species": "Little Egrets",
+      "location": "Manglajodi, Odisha",
+      "year": "2025",
+      "conservation_status": "Least Concern (IUCN Red List)",
+      "print_included": true,
+      "sizes": ["S", "M", "L", "XL", "XXL"]
+    },
+    {
+      "handle": "sarus-buffer-2025",
+      "catalogKey": "sarus",
+      "title": "Sarus — Buffer Zone 2025",
+      "colourway": "Panther Midnight",
+      "zone": "buffer",
+      "species": "Sarus Crane",
+      "location": "India",
+      "year": "2025",
+      "conservation_status": "Vulnerable (IUCN Red List)",
+      "print_included": true,
+      "sizes": ["S", "M", "L", "XL", "XXL"]
+    },
+    {
+      "handle": "jackal-buffer-2025",
+      "catalogKey": "jackal",
+      "title": "Jackal — Buffer Zone 2025",
+      "colourway": "Panther Midnight",
+      "zone": "buffer",
+      "species": "Indian Jackal",
+      "location": "India",
+      "year": "2025",
+      "conservation_status": "Least Concern (IUCN Red List)",
+      "print_included": true,
+      "sizes": ["S", "M", "L", "XL", "XXL"]
+    }
+  ],
+  "creatorTiers": {
+    "tier1": {
+      "tag": "creator-tier-1",
+      "creditInr": 10000,
+      "description": "150K+ followers — ₹10,000 store credit via gift card"
+    },
+    "tier2": {
+      "tag": "creator-tier-2",
+      "creditInr": 0,
+      "description": "Gifted shirt only — no store credit"
+    }
+  },
+  "noWasteDiscount": {
+    "code": "NOWASTE150",
+    "amountInr": 150,
+    "title": "Zero-Waste — Skip Duplicate Print"
+  }
+}
