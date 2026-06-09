@@ -1,0 +1,12 @@
+{
+  "drop": "Drop 01",
+  "creators": [
+    {
+      "name": "Creator One",
+      "email": "creator1@example.com",
+      "instagram": "@creator1",
+      "tier": "tier1",
+      "note": "Replace with real creator details before issuing gift cards"
+    }
+  ]
+}
