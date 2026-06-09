@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Archivo_Black, Dela_Gothic_One, Inter } from "next/font/google";
-import LayoutFooter from "@/components/LayoutFooter";
 import "./globals.css";
 
 const archivoBlack = Archivo_Black({
@@ -44,7 +43,6 @@ export default function RootLayout({
         className={`${archivoBlack.variable} ${delaGothicOne.variable} ${inter.variable} font-sans antialiased`}
       >
         {children}
-        <LayoutFooter />
       </body>
     </html>
   );
