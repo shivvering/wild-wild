@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function EyeIcon({ open }: { open: boolean }) {
   if (open) {
@@ -33,6 +33,10 @@ export default function PasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    window.sessionStorage.removeItem("ww-preview-last-activity");
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

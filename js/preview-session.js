@@ -3,6 +3,7 @@
   var CHECK_MS = 60 * 1000;
   var BUMP_THROTTLE_MS = 30 * 1000;
   var STORAGE_KEY = "ww-preview-last-activity";
+  var storage = window.sessionStorage;
 
   if (window.location.pathname === "/password") return;
 
@@ -11,12 +12,12 @@
   }
 
   function getLastActivity() {
-    var value = localStorage.getItem(STORAGE_KEY);
+    var value = storage.getItem(STORAGE_KEY);
     return value ? parseInt(value, 10) : 0;
   }
 
   function setLastActivity(timestamp) {
-    localStorage.setItem(STORAGE_KEY, String(timestamp));
+    storage.setItem(STORAGE_KEY, String(timestamp));
   }
 
   function isIdle() {
@@ -36,7 +37,7 @@
     })
       .catch(function () {})
       .finally(function () {
-        localStorage.removeItem(STORAGE_KEY);
+        storage.removeItem(STORAGE_KEY);
         window.location.replace("/password");
       });
   }
@@ -79,12 +80,6 @@
 
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "visible") checkIdle();
-  });
-
-  window.addEventListener("storage", function (event) {
-    if (event.key === STORAGE_KEY && event.newValue === null) {
-      window.location.replace("/password");
-    }
   });
 
   setInterval(checkIdle, CHECK_MS);
