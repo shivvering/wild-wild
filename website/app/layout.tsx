@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Archivo_Black, Dela_Gothic_One, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({
         className={`${archivoBlack.variable} ${delaGothicOne.variable} ${inter.variable} font-sans antialiased`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );

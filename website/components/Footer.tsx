@@ -64,7 +64,7 @@ export default function Footer() {
             <div className="footer-conservation-box">
               <div className="footer-stat">20%</div>
               <div className="footer-stat-copy">
-                Of net profits per sale. Launch partner: Wildlife SOS.
+                Of profits to Indian wildlife conservation.
               </div>
             </div>
           </div>

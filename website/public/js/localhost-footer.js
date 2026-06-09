@@ -1,4 +1,12 @@
 (function () {
+  var hostname = window.location.hostname;
+  var isLocal =
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "[::1]";
+
+  if (!isLocal) return;
+
   var link = document.createElement("link");
   link.rel = "stylesheet";
   link.href = "/css/site-footer.css";
